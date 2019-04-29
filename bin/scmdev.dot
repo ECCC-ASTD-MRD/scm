@@ -76,12 +76,12 @@ fi
 if [[ ${v} -gt 0 ]] ; then echo "Setting up SCM development experiment:" ; fi
 if [[ ${vv} -gt 0 ]] ; then
     ouv_exp_scm -v
-    linkit -v ${forced}
+    scmlinkit -v ${forced}
 else
     if [[ ${v} -gt 0 ]] ; then echo "  Opening experiment" ; fi
     ouv_exp_scm >/dev/null 2>&1
     if [[ ${v} -gt 0 ]] ; then echo "  Creating links" ; fi
-    linkit ${forced} >/dev/null
+    scmlinkit ${forced} >/dev/null
 fi
 if [[ ${v} -gt 0 ]] ; then echo "  Extracting ${case} case configuration" ; fi
 scmcase -get ${case} || printf "Run the following to get information about available case configurations:\n\n   scmcase -list\n\n"
