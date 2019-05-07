@@ -3,11 +3,11 @@
 ! SCM - Library of kernel routines for the RPN single column model
 ! Copyright (C) 1990-2017 - Division de Recherche en Prevision Numerique
 !                       Environnement Canada
-! This library is free software; you can redistribute it and/or modify it 
+! This library is free software; you can redistribute it and/or modify it
 ! under the terms of the GNU Lesser General Public License as published by
 ! the Free Software Foundation, version 2.1 of the License. This library is
 ! distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-! without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+! without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 ! PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 ! You should have received a copy of the GNU Lesser General Public License
 ! along with this library; if not, write to the Free Software Foundation, Inc.,
@@ -20,7 +20,7 @@ module step_mod
 
   private
 
-#include <arch_specific.hf>
+!!!#include <arch_specific.hf>
 
   ! Module parameters
   integer, parameter, private :: STDOUT=6               !Unit for stdout
@@ -110,14 +110,14 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   function step_get_char(F_key,F_value) result(F_status)
     ! Retrieve an namelist value
-    
+
     implicit none
 
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 
     ! Input variables
     character(len=*), intent(in) :: F_key               !Name of entry to retrieve
-    
+
     ! Output variables
     character(len=*), intent(out) :: F_value            !Value of entry
     integer :: F_status                                 !Return status for function
@@ -157,14 +157,14 @@ contains
   function step_get_int(F_key,F_value) result(F_status)
     use timestr_mod, only: timestr2step,timestr2sec
     ! Retrieve an namelist value
-    
+
     implicit none
 
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 
     ! Input variables
     character(len=*), intent(in) :: F_key               !Name of entry to retrieve
-    
+
     ! Output variables
     integer, intent(out) :: F_value                     !Value of entry
     integer :: F_status                                 !Return status for function
@@ -213,14 +213,14 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   function step_get_r8(F_key,F_value) result(F_status)
     ! Retrieve an namelist value
-    
+
     implicit none
 
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 
     ! Input variables
     character(len=*), intent(in) :: F_key               !Name of entry to retrieve
-    
+
     ! Output variables
     real(kind=8), intent(out) :: F_value                !Value of entry
     integer :: F_status                                 !Return status for function

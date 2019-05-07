@@ -3,11 +3,11 @@
 ! SCM - Library of kernel routines for the RPN single column model
 ! Copyright (C) 1990-2017 - Division de Recherche en Prevision Numerique
 !                       Environnement Canada
-! This library is free software; you can redistribute it and/or modify it 
+! This library is free software; you can redistribute it and/or modify it
 ! under the terms of the GNU Lesser General Public License as published by
 ! the Free Software Foundation, version 2.1 of the License. This library is
 ! distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-! without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+! without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 ! PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 ! You should have received a copy of the GNU Lesser General Public License
 ! along with this library; if not, write to the Free Software Foundation, Inc.,
@@ -24,7 +24,7 @@ module prof_mod
   private
 
 #include <gmm.hf>
-#include <arch_specific.hf>
+!!!#include <arch_specific.hf>
 
   ! Module parameters
   integer, parameter, private :: STDOUT=6,STDERR=0                              !output/error file descriptors
@@ -45,7 +45,7 @@ module prof_mod
        gmmk_pw_pt_plus_s='PW_PT:P', &                                           !thermo level pressure (Pa, time plus)
        gmmk_pw_gz_plus_s='PW_GZ:P', &                                           !geopotential (m^2/s^2 ASL, time plus)
        gmmk_pw_p0_plus_s='PW_P0:P', &                                           !surface pressure (Pa, time plus)
-       gmmk_pw_uu_moins_s='PW_UU:M', &                                          !west wind component (m/s, time minus) 
+       gmmk_pw_uu_moins_s='PW_UU:M', &                                          !west wind component (m/s, time minus)
        gmmk_pw_vv_moins_s='PW_VV:M', &                                          !south wind component (m/s, time minus)
        gmmk_pw_tt_moins_s='PW_TT:M', &                                          !temperature (K, time minus)
        gmmk_pw_pm_moins_s='PW_PM:M', &                                          !momentum level pressure (Pa, time minus)
@@ -75,8 +75,8 @@ module prof_mod
      logical :: wload                                                           !tracer will be loaded for Tv calculation
   end type tracer
   type output_var                                                               !structure continaing output field information
-     character(len=LONG_CHAR) :: oname                                          !string used to create output file name 
-     character(len=LONG_CHAR) :: name                                           !physics output field name 
+     character(len=LONG_CHAR) :: oname                                          !string used to create output file name
+     character(len=LONG_CHAR) :: name                                           !physics output field name
      character(len=LONG_CHAR) :: format                                         !write formatting statement
      character(len=LONG_CHAR) :: prefix                                         !file prefix (writing subdirectory)
      logical :: need_header                                                     !header requirements
@@ -173,7 +173,7 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine prof_parallel_init()
-    ! Perform necessary steps from init_component().  Initialize parallel 
+    ! Perform necessary steps from init_component().  Initialize parallel
     ! libraries.
 
     implicit none
@@ -225,7 +225,7 @@ contains
 
     implicit none
 
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 #include <WhiteBoard.hf>
 
     ! Local variables
@@ -296,7 +296,7 @@ contains
     output_list = ''
     output_buffer_length = -1
     prof_point = (/MISSING_POINT,MISSING_POINT/)
-    debug_L = .false. 
+    debug_L = .false.
     cstv_ptop_8 = 100d0
     grd_rcoef = (/1.,1./)
     hyb = -1.
@@ -429,7 +429,7 @@ contains
 
     implicit none
 
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 #include <rmnlib_basics.hf>
 
     ! Input arguments
@@ -477,7 +477,7 @@ contains
        tr_tmp(ntr) = tracer(vname,basename,pmeta(i)%wload)
     enddo
     deallocate(pmeta); nullify(pmeta)
-    
+
     ! Create and fill final storage structure for tracers
     allocate(tracers(ntr),stat=err)
     call handle_error(err,'prof_tracers','Allocating tracer list')
@@ -652,7 +652,7 @@ contains
   subroutine prof_dyn_fwd(F_diag)
     ! Perform a forward-differencing timestep for the physical-world
     ! variables defined in GMM.  In the prognostic equations, the advective,
-    ! background (relaxation) and geostrophic (if applicable) terms is 
+    ! background (relaxation) and geostrophic (if applicable) terms is
     ! de-activated if the data is not available: this is accomplished through
     ! calls to prof_is_valid().
     use tdpack, only: RGASD,CPD,OMEGA,PI
@@ -701,7 +701,7 @@ contains
     istat = gmm_get(gmmk_pw_wz_plus_s,wz,meta)
     call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_wz_plus_s))
     call prof_w('height',wz)
-    
+
     ! Compute pressure-coordinate vertical motion for prognostic equations
     nullify(ww)
     istat = gmm_get(gmmk_pw_ww_plus_s,ww,meta)
@@ -944,7 +944,7 @@ contains
     err = min(wb_put('dyn/cond_infilter',cond_sig), err)
     err = min(wb_put('dyn/sgo_tdfilter',gwd_sig), err)
     call handle_error_l(WB_IS_OK(err),'prof_phy_init','Error in physics filtering handshake')
-    
+
     ! Retrieve the heights of the diagnostic levels (thermodynamic and momentum) from the physics
     err = WB_OK
     err= min(wb_get('phy/zu', zu), err)
@@ -1092,7 +1092,7 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-    
+
     ! Input arguments
     character(len=*),intent(in) :: F_name_S,F_horiz_interp_S
     integer,intent(in) :: F_minx,F_maxx,F_miny,F_maxy,F_k0,F_kn
@@ -1105,7 +1105,7 @@ contains
 
     ! No folding required for SCM
     F_istat = RMN_OK
-    
+
   end function prof_phy_prefold_opr
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1118,7 +1118,7 @@ contains
 #include <rmnlib_basics.hf>
 
     ! Input arguments
-    logical :: F_apply_L                                !apply physics tendencies   
+    logical :: F_apply_L                                !apply physics tendencies
 
     ! Local variables
     integer :: k,cnt,nread_tr
@@ -1552,7 +1552,7 @@ contains
              do k=p_nk-2,1,-1
                 pprof%lev(k) = (ptr3d(1,1,k)+ptr3d(1,1,k+1))/2.
              enddo
-             pprof%lev(1:p_nk-1) = (pprof%lev(1:p_nk-1)-ptr2d(1,1))/grav 
+             pprof%lev(1:p_nk-1) = (pprof%lev(1:p_nk-1)-ptr2d(1,1))/grav
              pprof%lev(p_nk) = 0.
              tt%n = p_nk
              tt%lev = pprof%val
@@ -1598,7 +1598,7 @@ contains
              pos = index(var_check,'^')
           enddo
           ! Compute pressure values for input levels
-          input_plevs: if (heights) then             
+          input_plevs: if (heights) then
              do k=nlevs,1,-1
                 j = pprof%n-1
                 do while (levs(k) > pprof%lev(j) .and. j > 1)
@@ -1614,7 +1614,7 @@ contains
                    tlev = alpha*tv(j) + (1.-alpha)*tv(j+1)
                    tmean = (tlev + tv(j+1))/2.
                 endif layer_mean_temperature
-                plevs(1,1,k) = pprof%val(j+1)*exp(-(grav/(rgasd*tmean))*(levs(k)-pprof%lev(j+1)))   
+                plevs(1,1,k) = pprof%val(j+1)*exp(-(grav/(rgasd*tmean))*(levs(k)-pprof%lev(j+1)))
              enddo
           else
              plevs(1,1,1:nlevs) = levs(1:nlevs)
@@ -1647,7 +1647,7 @@ contains
     ier = fclos(iun)
 
     ! Set elevation values for initialization
-    if (init) then  
+    if (init) then
        nullify(ptr2d)
        istat = gmm_get(gmmk_pw_me_moins_s,ptr2d,meta)
        call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_me_moins_s))
@@ -1658,7 +1658,10 @@ contains
     ! all the tracer reads because of the entry's IPC.  In the SCM, prof_phy_init() is called before the
     ! input files are read, so this is our first opportunity to set the read tracer value.
     if (init) then
-       call handle_error_l(WB_IS_OK(wb_put('itf_phy/READ_TRACERS',read_tr(1:nread_tr)),err), &
+       call handle_error_l(&
+            WB_IS_OK( &
+            wb_put('itf_phy/READ_TRACERS',read_tr(1:nread_tr)) &
+            ), &
             'prof_read_data','Adding whiteboard entry for itf_phy/READ_TRACERS')
     endif
 
@@ -1798,7 +1801,7 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 #include <WhiteBoard.hf>
 
     ! Output arguments
@@ -1843,7 +1846,7 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 #include <WhiteBoard.hf>
 #include <msg.h>
 
@@ -1969,7 +1972,7 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 #include <WhiteBoard.hf>
 
     ! Input arguments
@@ -2153,7 +2156,7 @@ contains
           F_data(:,:,nk) = diag_height
        endif
     end select SPECIAL_FIELDS
-    
+
   end subroutine prof_output_special
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2225,7 +2228,7 @@ contains
           date_buffer(output_buffer_count) = ISOdate
        endif
        output_buffer(1:size(F_data),F_buffer_id,output_buffer_count) = F_data
-       if (flush_buffer .or. F_flush) then          
+       if (flush_buffer .or. F_flush) then
           open(unit=oun,file=trim(F_fname_S),status='OLD',action='WRITE',position='APPEND',iostat=err)
           call handle_error_l(err==0,'prof_write','Acquiring buffering lock for '//trim(F_fname_S))
           do i=1,output_buffer_count
@@ -2241,7 +2244,7 @@ contains
        write(oun,'(a,x,'//trim(clen)//'('//trim(fmt)//',x))') trim(ISOdate),F_data
        close(oun)
     end if BUFFERED_WRITE
-    
+
   end subroutine prof_write
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2275,7 +2278,7 @@ contains
     ! Perform necessary steps from pw_update_GPW.  This consists of updating
     ! heights and coordinate pressures in the SCM.
     use tdpack, only: GRAV
-    
+
     implicit none
 
     ! Local variables
@@ -2288,8 +2291,8 @@ contains
     ! Update coordinate
     call prof_update_pres()
 
-    ! Update geopotential (AGL, units m2/s2) on thermo levels as a purely diagnostic value.  
-    ! GEM computes this in pw_update_GPW() using the prognostic geopotential perturbation 
+    ! Update geopotential (AGL, units m2/s2) on thermo levels as a purely diagnostic value.
+    ! GEM computes this in pw_update_GPW() using the prognostic geopotential perturbation
     ! (fiptx), but it must be done diagnostically in the SCM.
     call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_gz_plus_s,plus)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_gz_plus_s))
     call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_gz_moins_s,moins)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_gz_moins_s))
@@ -2405,7 +2408,7 @@ contains
 
     ! Determine output coordinate for calculations
     W_COORD: select case (F_coord)
-       
+
     case ('pressure')
        ! Pressure-coordinate output (omega; Pa/s)
        if (pre_ww) then
@@ -2566,7 +2569,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine prof_set_geom(ppoint)
     ! Perform necessary steps from set_geom().  Use the profile
-    ! point information to create a "grid" that ezscint can use to 
+    ! point information to create a "grid" that ezscint can use to
     ! interpolate to the profile location.
     use hgrid_wb, only: hgrid_wb_put
 
@@ -2628,7 +2631,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine prof_output_prefix(F_prefix,F_prefix_coord)
      ! Set path names for output files
-     
+
      implicit none
 
      ! Output arguments

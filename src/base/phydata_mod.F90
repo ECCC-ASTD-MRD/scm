@@ -3,11 +3,11 @@
 ! SCM - Library of kernel routines for the RPN single column model
 ! Copyright (C) 1990-2017 - Division de Recherche en Prevision Numerique
 !                       Environnement Canada
-! This library is free software; you can redistribute it and/or modify it 
+! This library is free software; you can redistribute it and/or modify it
 ! under the terms of the GNU Lesser General Public License as published by
 ! the Free Software Foundation, version 2.1 of the License. This library is
 ! distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-! without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+! without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 ! PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 ! You should have received a copy of the GNU Lesser General Public License
 ! along with this library; if not, write to the Free Software Foundation, Inc.,
@@ -20,7 +20,7 @@ module phydata_mod
 
   private
 
-#include <arch_specific.hf>
+!!!#include <arch_specific.hf>
 
   ! Module parameters
   integer, parameter, private :: STDOUT=6               !Unit for stdout
@@ -53,7 +53,7 @@ module phydata_mod
 
   ! Export API (subprograms)
   public :: pd_init                                     !Initialize driving data reading
-  public :: pd_step                                     !Set current step number       
+  public :: pd_step                                     !Set current step number
   public :: pd_get                                      !Retrieve driving data within the physics
   public :: pd_finalize                                 !Close file and release unit number
 
@@ -126,7 +126,7 @@ contains
 
     ! Input variables
     character(len=*), intent(in) :: F_name              !Field name in the input file
-    
+
     ! Output variables
     integer, target, intent(out), optional :: stat      !Completion status of the function (GD_OK or GD_ERROR)
     real :: F_value                                     !Value of the field
@@ -173,7 +173,7 @@ contains
 
     implicit none
 
-#include <clib_interface.cdk>
+#include <clib_interface_mu.hf>
 
     ! Output variables
     integer :: F_status                                 !Return status for function
@@ -188,7 +188,7 @@ contains
 
     ! External subprograms
     integer, external :: fnom,fclos
-    
+
     ! Namelist definition
     namelist /phydata/ type,debug
 
@@ -361,7 +361,7 @@ contains
     ! Input variables
     character(len=*), intent(in) :: F_name              !Field name in the input file
     integer, intent(in) :: F_vtime                      !Valid time for data (CMC datestamp)
-    
+
     ! Output variables
     real, intent(out) :: F_value                        !Value of the field
     integer :: F_status                                 !Return status for function
@@ -396,7 +396,7 @@ contains
 
     ! Input variables
     integer, intent(in) :: F_stepno                     !Step number
-    
+
     ! Output variables
     integer, intent(out) :: F_vtime                     !Valid time for data (CMC datestamp)
     integer :: F_status                                 !Return status for function
@@ -486,7 +486,7 @@ contains
 
     ! Input variables
     integer, intent(in) :: F_vtime                      !Valid time for data (CMC datestamp)
-    
+
     ! Output variables
     integer :: F_status                                 !Return status for function
 
