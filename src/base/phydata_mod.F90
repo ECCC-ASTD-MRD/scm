@@ -1,5 +1,5 @@
 !COMP_ARCH=intel-2016.1.156 ; -add=-C -g -traceback -ftrapuv
-!---------------------------------- LICENCE BEGIN -------------------------------
+!---------------------------------- LICENCE BEGIN ------------------------------
 ! SCM - Library of kernel routines for the RPN single column model
 ! Copyright (C) 1990-2017 - Division de Recherche en Prevision Numerique
 !                       Environnement Canada
@@ -12,10 +12,10 @@
 ! You should have received a copy of the GNU Lesser General Public License
 ! along with this library; if not, write to the Free Software Foundation, Inc.,
 ! 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-!---------------------------------- LICENCE END ---------------------------------
+!---------------------------------- LICENCE END --------------------------------
 
 module phydata_mod
-
+  use clib_itf_mod
   implicit none
 
   private
@@ -172,8 +172,6 @@ contains
     use step_mod, only:step_init,step_get,STEP_OK
 
     implicit none
-
-#include <clib_interface_mu.hf>
 
     ! Output variables
     integer :: F_status                                 !Return status for function

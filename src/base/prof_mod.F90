@@ -17,13 +17,15 @@
 !!$#include "model_macros_f.h"
 
 module prof_mod
+  use, intrinsic :: iso_fortran_env, only: REAL64, INT64
+  use clib_itf_mod
+  use wb_itf_mod
   use vGrid_Descriptors, only: vgrid_descriptor
-
   implicit none
 
   private
 
-#include <gmm.hf>
+#include <mu_gmm.hf>
 !!!#include <arch_specific.hf>
 
   ! Module parameters
@@ -224,9 +226,6 @@ contains
     ! directory structure from the environment.
 
     implicit none
-
-#include <clib_interface_mu.hf>
-#include <WhiteBoard.hf>
 
     ! Local variables
     integer :: err,i
@@ -429,7 +428,6 @@ contains
 
     implicit none
 
-#include <clib_interface_mu.hf>
 #include <rmnlib_basics.hf>
 
     ! Input arguments
@@ -861,7 +859,6 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <WhiteBoard.hf>
 #include <msg.h>
 
     ! Output arguments
@@ -1114,7 +1111,6 @@ contains
     ! or handle tracer fields during initialization.
     use phy_itf, only: phy_get
 
-#include <WhiteBoard.hf>
 #include <rmnlib_basics.hf>
 
     ! Input arguments
@@ -1359,7 +1355,6 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <WhiteBoard.hf>
 
     ! Input arguments
     character(len=*), intent(in) :: F_date              !date of file to read
@@ -1801,8 +1796,6 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <clib_interface_mu.hf>
-#include <WhiteBoard.hf>
 
     ! Output arguments
     logical, intent(out), optional :: F_initialized             !Initialization status of output system
@@ -1846,8 +1839,6 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <clib_interface_mu.hf>
-#include <WhiteBoard.hf>
 #include <msg.h>
 
     ! Output arguments
@@ -1972,8 +1963,6 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <clib_interface_mu.hf>
-#include <WhiteBoard.hf>
 
     ! Input arguments
     integer, intent(in) :: F_stepno                     !time step number
@@ -2125,7 +2114,6 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <WhiteBoard.hf>
 
     ! Input arguments
     character(len=*), intent(in) :: F_name_S                    !output field name

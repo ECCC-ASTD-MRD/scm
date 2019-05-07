@@ -15,7 +15,7 @@
 !---------------------------------- LICENCE END ---------------------------------
 
 module step_mod
-
+  use clib_itf_mod
   implicit none
 
   private
@@ -113,7 +113,6 @@ contains
 
     implicit none
 
-#include <clib_interface_mu.hf>
 
     ! Input variables
     character(len=*), intent(in) :: F_key               !Name of entry to retrieve
@@ -159,8 +158,6 @@ contains
     ! Retrieve an namelist value
 
     implicit none
-
-#include <clib_interface_mu.hf>
 
     ! Input variables
     character(len=*), intent(in) :: F_key               !Name of entry to retrieve
@@ -215,8 +212,6 @@ contains
     ! Retrieve an namelist value
 
     implicit none
-
-#include <clib_interface_mu.hf>
 
     ! Input variables
     character(len=*), intent(in) :: F_key               !Name of entry to retrieve
