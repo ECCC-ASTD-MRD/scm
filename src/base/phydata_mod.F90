@@ -1,4 +1,5 @@
 !COMP_ARCH=intel-2016.1.156 ; -add=-C -g -traceback -ftrapuv
+!COMP_ARCH=intel-19.0.3.199 ; -add=-C -g -traceback -ftrapuv
 !---------------------------------- LICENCE BEGIN ------------------------------
 ! SCM - Library of kernel routines for the RPN single column model
 ! Copyright (C) 1990-2017 - Division de Recherche en Prevision Numerique
