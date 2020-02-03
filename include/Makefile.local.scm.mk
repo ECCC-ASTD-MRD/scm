@@ -113,7 +113,7 @@ endif
 #TODO: needed for eccc-ppp12 load... find less hacky way
 # ifeq (ubuntu-14.04-amd64-64,$(ORDENV_PLAT))
 # ifneq (,$(wildcard /fs/ssm/*)) #/fs/ssm now exists on ECCMC side as well
-ifeq (,$(wildcard /ssm/net/*))
+#ifeq (,$(wildcard /ssm/net/*))
 ifneq (,$(filter intel%,$(COMP_ARCH))$(filter PrgEnv-intel%,$(COMP_ARCH)))
    SCMEXTRALIBS =
    ifneq (,$(filter PrgEnv-intel%,$(COMP_ARCH)))
@@ -124,7 +124,7 @@ ifneq (,$(filter intel%,$(COMP_ARCH))$(filter PrgEnv-intel%,$(COMP_ARCH)))
       NETCDFLIBS = netcdff netcdf hdf5hl_fortran hdf5_hl hdf5_fortran hdf5 dl m z curl  #SuperSet
    endif
 endif
-endif
+#endif
 
 
 #---- Abs targets -----------------------------------------------------
