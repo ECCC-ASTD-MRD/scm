@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/bash
 
 set -e
 
@@ -36,7 +36,7 @@ for item in mainscm ; do
    if [[ ! -s ${BUILDBIN}/${absname} ]] ; then
       if [[ -n "${SCM_DEV_UPDATES}" ]] ; then
          cat > ${BUILDBIN}/${absname} <<EOF
-#!/usr/bin/env ksh
+#!/usr/bin/env bash
 message="Rebuild SCM executable with 'make scm' to include updates ${SCM_DEV_UPDATES}"
 printf "\nERROR: \${message}\n\n" 1>&2
 exit 1

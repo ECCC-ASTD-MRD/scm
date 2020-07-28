@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/bash
 
 # Retrieve command line arguments
 arguments=$*
@@ -13,7 +13,7 @@ fi
 
 # Process command line arguments
 eval $(cclargs scmdev.dot "[Create a SCM development experiment]" \
-    -dev	   ""      ""     "[SCM develompent directory base path]" \
+    -dev    ""      ""     "[SCM develompent directory base path]" \
     -case   "gabls-3" ""   "[Default SCM case to extract]" \
     -f      "0"     "1"    "[Force overwrite of existing directories]" \
     -update ""      ""     "[List of additional packages to load]" \
