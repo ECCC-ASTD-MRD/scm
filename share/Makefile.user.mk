@@ -13,10 +13,10 @@ endif
 # MPI     = -mpi
 # LFLAGS  =     # User's flags passed to the linker
 ifneq (,$(filter intel%,$(COMP_ARCH))$(filter PrgEnv-intel%,$(COMP_ARCH)))
-   FFLAGS  = -C -g -traceback -ftrapuv #-warn all -warn nointerfaces
-   CFLAGS  = -C -g -traceback -ftrapuv #-fp-model precise -Wall
+	FFLAGS  = -C -g -fp-speculation=safe -init=snan,arrays -traceback -ftrapuv -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
+	CFLAGS  = -C -g -traceback -ftrapuv -fp-model precise #-Wall
 else
-   FFLAGS  = -C -g -traceback
+   FFLAGS  = -g -traceback -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
    CFLAGS  = -C -g -traceback
 endif
 # LIBAPPL = 
@@ -46,11 +46,11 @@ endif
 ## Step 1: uncomment the following lines
 
 # ifneq (,$(filter intel%,$(COMP_ARCH))$(filter PrgEnv-intel%,$(COMP_ARCH)))
-#    FFLAGS = -C -g -traceback -ftrapuv -warn all -warn nointerfaces
-#    CFLAGS = -C -g -traceback -ftrapuv -fp-model precise #-Wall
+# 	FFLAGS  = -C -g -fp-speculation=safe -init=snan,arrays -traceback -ftrapuv -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
+# 	CFLAGS  = -C -g -traceback -ftrapuv -fp-model precise #-Wall
 # else
-#    FFLAGS = -C -g -traceback
-#    CFLAGS = -C -g -traceback
+#    FFLAGS  = -g -traceback -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
+#    CFLAGS  = -C -g -traceback
 # endif
 
 ## Step 2: Add the following line (uncommented) in "Makefile.user.root.mk"
