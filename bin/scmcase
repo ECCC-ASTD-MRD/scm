@@ -1,4 +1,4 @@
-#!/usr/bin/env ksh
+#!/usr/bin/env bash
 arguments=$*
 set -e 
 
@@ -12,16 +12,16 @@ fi
 deflist=0
 if [[ -z "${1}" ]] ; then deflist=1 ; fi
 eval `cclargs $0 \
- -list       "${deflist}" "1"     "[List available cases                       ]" \
- -get			 ""			  ""		 "[Extract case configuration						  ]" \
- -f		    "0"			  "1"		 "[Force overwrite of local configuration		  ]" \
+ -list       "${deflist}"  "1"     "[List available cases                  ]" \
+ -get        " "           " "     "[Extract case configuration            ]" \
+ -f          "0"           "1"     "[Force overwrite of local configuration]" \
  ++ $arguments`
 
 # List available cases
 case_configs=${scm}/share/run_configs
 if [[ ${list} -gt 0 ]] ; then
    echo ""
-	for config in $(ls -d ${case_configs}/*); do
+   for config in $(ls -d ${case_configs}/*); do
       if [[ ! -d ${config} ]] ; then continue ; fi
       descrip_file=${config}/short_description.txt
       descrip=''

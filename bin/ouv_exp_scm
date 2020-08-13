@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/bash
 
 myself=$0
 DESC='Open a new RDE experiment with pre-set SRCPATH for SCM'
@@ -57,7 +57,7 @@ fi
 
 
 if [[ x${modelutils} == x || ! -d ${modelutils}/src ]] ; then
-	 cat <<EOF
+    cat <<EOF
 ERROR: \${modelutils} not defined or src dir does not exist
        modelutils=${modelutils}
        Cannot setup the experiment directory
@@ -65,10 +65,10 @@ ERROR: \${modelutils} not defined or src dir does not exist
        Please make sure you loaded the full SCM development environment
 ---- ABORT ----
 EOF
-	 exit 1
+    exit 1
 fi
 if [[ x${rpnphy} == x || ! -d ${rpnphy}/src ]] ; then
-	 cat <<EOF
+    cat <<EOF
 ERROR: \${rpnphy} not defined or does not exists
        rpnphy=${rpnphy}
        Cannot setup the experiment directory
@@ -76,10 +76,10 @@ ERROR: \${rpnphy} not defined or does not exists
        Please make sure you loaded the full SCM development environment
 ---- ABORT ----
 EOF
-	 exit 1
+    exit 1
 fi
 if [[ x${scm} == x || ! -d ${scm}/src ]] ; then
-	 cat <<EOF
+    cat <<EOF
 ERROR: \${scm} not defined or does not exists
        scm=${scm}
        Cannot setup the experiment directory
@@ -87,7 +87,7 @@ ERROR: \${scm} not defined or does not exists
        Please make sure you loaded the full SCM development environment
 ---- ABORT ----
 EOF
-	 exit 1
+    exit 1
 fi
 
 VALIDEXT="${CONST_RDESUFFIXINC} ${CONST_RDESUFFIXSRC}"

@@ -1,4 +1,4 @@
-#!/usr/bin/env ksh
+#!/usr/bin/env bash
 # Completely remove a development directory and storage
 
 # Retrieve command line arguments
@@ -7,14 +7,14 @@ usage="Usage: $0 [options]"
 
 # Check for an SCM development environment
 if [[ -z "${SCM_DEV_EXP}" ]] ; then
-    echo "No active development environment:  use scmdev.dot to create one"
-    exit 1
+   echo "No active development environment:  use scmdev.dot to create one"
+   exit 1
 fi
 
 # Process command line arguments
 eval $(cclargs $0 "[Clean up a SCM development directory]" \
-    -f		"0"			"1"	"[Force all removal]" \
-    ++ $arguments)
+               -f   "0"         "1"   "[Force all removal]" \
+               ++ $arguments)
 
 
 # Check for development directory
@@ -22,27 +22,27 @@ exps=${SCM_DEV_EXP}
 
 # Confirm removals
 confirm_rm(){
-    desc=${1}
-    answer=-1
-    while true ; do
-	echo "Remove ${desc} for ${exp}? [y/n] " 1>&2
-	read yn
-	case ${yn} in
-	    [Yy]* )
-                answer=1
-		break;;
-	    [Nn]* )
-		answer=0
-		break;;
-	    *)
-	        echo "Please answer y (yes) or n (no)" 1>&2
-	esac
-    done
-    if [[ ${answer} -lt 0 ]] ; then 
-	echo "Aborting on impossible situation with answer=${yn}" 1>&2
-	exit 1
-    fi
-    echo ${answer}
+   desc=${1}
+   answer=-1
+   while true ; do
+      echo "Remove ${desc} for ${exp}? [y/n] " 1>&2
+      read yn
+      case ${yn} in
+         [Yy]* )
+            answer=1
+            break;;
+         [Nn]* )
+            answer=0
+            break;;
+         *)
+            echo "Please answer y (yes) or n (no)" 1>&2
+      esac
+   done
+   if [[ ${answer} -lt 0 ]] ; then 
+      echo "Aborting on impossible situation with answer=${yn}" 1>&2
+      exit 1
+   fi
+   echo ${answer}
 }
 
 # Remove all requested experiments
@@ -58,11 +58,11 @@ for exp in ${exps} ; do
    if [[ ${f} -gt 0 || $(confirm_rm "results/storage space") -gt 0 ]] ; then
       linkit_log=${exp}/.linkit.log
       if [[ -f ${linkit_log} ]] ; then
-	      while read entry ; do
-	         host=${entry%%:*}
-	         path=${entry##*:}
-		      ssh -n ${host} rm -rf ${path}
-	      done <${linkit_log}
+         while read entry ; do
+            host=${entry%%:*}
+            path=${entry##*:}
+            ssh -n ${host} rm -rf ${path}
+         done <${linkit_log}
       fi
    fi
 
