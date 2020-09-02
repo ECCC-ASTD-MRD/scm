@@ -2,6 +2,6 @@ ubuntu-18.04-skylake-64:hpco/exp/hdf5-netcdf4/serial/static/intel-19.0.3.199/02
 ubuntu-18.04-amd64-64:hpco/exp/hdf5-netcdf4/serial/static/intel-19.0.3.199/02
 sles-15-skylake-64-xc50:cray-netcdf
 
-eccc/cmo/cmoi/base/20190712
+eccc/cmo/cmoi/base/20200123
 
 eccc/mrd/rpn/MIG/SCM/d/scm-data/scm-data_0.15.1
