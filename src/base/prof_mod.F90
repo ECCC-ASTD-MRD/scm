@@ -952,8 +952,8 @@ contains
     ! Add the diagnostic heights to the vertical coordinate of the model
     err = VGD_OK
     level_kind_diag=4
-    call convip(zuip,zu,level_kind_diag,+2,'',.true.)
-    call convip(ztip,zt,level_kind_diag,+2,'',.true.)
+    call convip_plus(zuip,zu,level_kind_diag,+2,'',.true.)
+    call convip_plus(ztip,zt,level_kind_diag,+2,'',.true.)
     err = min(vgd_put(vcoord,'DIPM - IP1 of diagnostic level (m)',zuip), err)
     err = min(vgd_put(vcoord,'DIPT - IP1 of diagnostic level (t)',ztip), err)
     call handle_error_l(err==VGD_OK,'prof_phy_init','Setting diagnostic levels (DIPM/T)')
