@@ -33,7 +33,7 @@ eval `cclargs $0 \
 
 # Check for required arguments
 if [[ -z "$exp" ]] ; then
-  print "ERROR: exp must be provided either as an argument or in "${cfgfile}
+  printf "ERROR: exp must be provided either as an argument or in "${cfgfile}
   exit 1
 fi
 
@@ -122,9 +122,9 @@ dest=$(${TASK_BIN}/readlink ${TASK_OUTPUT}/xfer)
 log=${TASK_WORK}/xfer.log
 ${TASK_BIN}/remote_copy -r ${src}/* ${dest} >${log} 2>&1
 if [[ $? == 0 ]] ; then
-   print "\n SCM outputs available in ${xfer_full}\n"
+   printf "\n SCM outputs available in ${xfer_full}\n"
 else
-   print "\n An error occured during file transfer: see ${log} for details\n\n SCM output is available in ${src}\n"
+   printf "\n An error occured during file transfer: see ${log} for details\n\n SCM output is available in ${src}\n"
 fi
 set -e
 
