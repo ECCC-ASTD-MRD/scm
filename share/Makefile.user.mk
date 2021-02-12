@@ -13,8 +13,11 @@ endif
 # MPI     = -mpi
 # LFLAGS  =     # User's flags passed to the linker
 ifneq (,$(filter intel%,$(COMP_ARCH))$(filter PrgEnv-intel%,$(COMP_ARCH)))
-	FFLAGS  = -C -g -fp-speculation=safe -init=snan,arrays -traceback -ftrapuv -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
-	CFLAGS  = -C -g -traceback -ftrapuv -fp-model precise #-Wall
+## There are 2 FFLAGS to use (2 objects and binaries) to test with
+## since -ftrapuv seems to deactivate -C with compiler intel 19.0.{3,5}
+   FFLAGS  = -C -g -fp-speculation=safe -init=snan,arrays -traceback -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
+   # FFLAGS  = -ftrapuv -g -fp-speculation=safe -init=snan,arrays -traceback -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
+   CFLAGS  = -C -g -traceback -ftrapuv -fp-model precise #-Wall
 else
    FFLAGS  = -g -traceback -warn all -warn nointerfaces -check noarg_temp_created -std08 -diag-disable 5268
    CFLAGS  = -C -g -traceback
