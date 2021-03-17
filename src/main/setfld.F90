@@ -138,10 +138,10 @@ subroutine setfld()
            if (sets(set)%lev < 0) then
               found = .true.
            else
-              call convip(ip1,pval,kind,-1,'',.false.)
-              call convip(ival,pval,kind,+2,'',.false.)
+              call convip_plus(ip1,pval,kind,-1,'',.false.)
+              call convip_plus(ival,pval,kind,+2,'',.false.)
               if (sets(set)%lev == ival) found = .true.
-              call convip(ival,pval,kind,+3,'',.false.)
+              call convip_plus(ival,pval,kind,+3,'',.false.)
               if (sets(set)%lev == ival) found = .true.
            endif
         endif
