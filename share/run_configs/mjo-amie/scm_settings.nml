@@ -104,8 +104,6 @@ output_list = 'TG','TJ','TM','RH','UD','VD','ED','DQ',
  STCOND           = 'consun'   ,
  INILWC           = .true.     ,
 
- KTICEFRAC        = .false.    ,
-
  PCPTYPE          = 'bourge'   ,
 
  QCO2             = 380.0      ,
@@ -114,9 +112,15 @@ output_list = 'TG','TJ','TM','RH','UD','VD','ED','DQ',
 &__deleted__
 zta=-1.,
 zua=-1.,
+kticefrac=.false.,
 /
 &__rpnphy_upcfg__
 orig_version=6.0.b7,
 from_version=6.0.b7,
 version=6.0.rc3,
+/
+&__rpnphyupcfgnml__
+orig_version=6.2.0-a2,
+from_version=6.2.0-a2,
+version=6.2.0-a3,
 /

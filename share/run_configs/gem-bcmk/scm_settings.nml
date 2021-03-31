@@ -73,8 +73,6 @@
  STCOND           = 'consun'   ,
  INILWC           = .true.     ,
 
- KTICEFRAC        = .false.    ,
-
  PCPTYPE          = 'bourge3d' ,
 
  QCO2             = 380.0      ,
@@ -83,9 +81,15 @@
 &__deleted__
 zta=-1.,
 zua=-1.,
+kticefrac=.false.,
 /
 &__rpnphy_upcfg__
 orig_version=6.0.b7,
 from_version=6.0.b7,
 version=6.0.rc3,
+/
+&__rpnphyupcfgnml__
+orig_version=6.2.0-a2,
+from_version=6.2.0-a2,
+version=6.2.0-a3,
 /
