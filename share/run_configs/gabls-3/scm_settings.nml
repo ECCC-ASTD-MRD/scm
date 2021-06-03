@@ -49,7 +49,7 @@
  KFCTRIGL         = 0.01       ,
  KFCTRIGLAT       = .true.     ,
  TRIGLAT          = 25.,30.    ,
- SHAL             = 'ktrsnt_mg',
+ SHAL             = 'bechtold',
 
  /
 
@@ -57,11 +57,9 @@
 
  RADIA            = 'cccmarad' ,  
  KNTRAD_S         = '30m'      ,
- RADFLTR          = .false.    ,
- TS_FLXIR         = .true.     ,
  STRATOS          = .true.     ,
 
- GWDRAG           = 'gwd86'    ,
+ GWDRAG           = 'sgo16'    ,
  NON_ORO          = .true.     ,
  LMETOX           = .true.     , 
 
