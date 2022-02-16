@@ -45,14 +45,14 @@ subroutine fst2ptxt()
 
   ! Local variables
   integer :: i,j,k,fdin,fdout,err,nrec,nkeys,dateo,deet,npas,nbits,datyp, &
-       ip1,ip2,ip3,ip4,ni,nj,nk,ig1,ig2,ig3,ig4,swa,lng,dltf,ubc, &
-       ex1,ex2,ex3,nnames,ntr,datev,nfld,itt,iuu,ivv,iww,ihu,itr,ip0,igz, &
+       ip1,ip2,ip3,ni,nj,nk,ig1,ig2,ig3,ig4,swa,lng,dltf,ubc, &
+       ex1,ex2,ex3,ntr,datev,nfld,itt,iuu,ivv,iww,ihu,itr,ip0,igz, &
        gid_prof,gid_zoom,i_zoom,j_zoom,key,ndates,t,iuu_dyn,ivv_dyn,itt_dyn, &
        ihu_dyn,itst,base_datev,pex,pey,pe_local,pe_total
   integer, dimension(:), allocatable :: keyList,keysm,keyst,im,it,dateList
   integer, dimension(:), pointer :: ip1t,ip1m
   real :: tcdk,omega,pi,grav,di,dj,d_zoom,mult
-  real, dimension(1) :: pt,i_map,j_map,ax,ay,lon,lat
+  real, dimension(1) :: i_map,j_map,ax,ay,lon,lat
   real, dimension(:), allocatable :: geo,advm,advt
   real, dimension(:), pointer :: profpm_col=>null(),profpt_col=>null()
   real, dimension(1,1,1) :: p0,me,test_point
@@ -793,8 +793,8 @@ contains
     type(field), intent(in) :: fu,fv
     real, dimension(:,:,:), intent(in) :: p
     character(len=*), intent(in) :: int,fmt
-    integer :: k,err
-    real, dimension(1,1,size(p,dim=3)) :: pu,pv,su,sv,spd,dir
+    integer :: k
+    real, dimension(1,1,size(p,dim=3)) :: su,sv
     real, dimension(size(fu%v3d,dim=1),size(fu%v3d,dim=2),size(fu%v3d,dim=3)) :: v_on_ugrid
     integer, external :: ezdefset,ezuvint,gdwdfuv,ezsetopt,ezsetval
     if (fu%gid /= fv%gid) then

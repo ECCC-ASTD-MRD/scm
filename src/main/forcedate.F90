@@ -25,7 +25,7 @@ subroutine forcedate()
 
   ! Local variables
   integer :: i,err,fdin,fdout,nrec,dateo,deet,npas,nbits,datyp, &
-       ip1,ip2,ip3,ip4,ni,nj,nk,ig1,ig2,ig3,ig4,swa,lng,dltf,ubc, &
+       ip1,ip2,ip3,ni,nj,nk,ig1,ig2,ig3,ig4,swa,lng,dltf,ubc, &
        ex1,ex2,ex3,fdate,fdeet,fnpas,nkeys,pex,pey,pe_local,pe_total
   integer, dimension(:), allocatable :: keyList
   real, dimension(1) :: work

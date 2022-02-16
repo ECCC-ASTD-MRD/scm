@@ -229,7 +229,7 @@ contains
     implicit none
 
     ! Local variables
-    integer :: err,i
+    integer :: err
     character(len=LONG_CHAR) :: envvar,o_subdir_data,o_subdir_coord
 
     ! Identify task directories
@@ -270,11 +270,10 @@ contains
     real, parameter :: MISSING_POINT=-9999.
 
     ! Local variables
-    integer :: i,iun,ier,coord_ver,step_total,nesdt
+    integer :: iun,ier,coord_ver,step_total,nesdt
     integer, dimension(:), pointer :: ip1m,ip1t
     real, dimension(2) :: grd_rcoef
     real, dimension(MAX_LEVELS) :: hyb
-    real(kind=8) :: ptop_out
     character(len=LONG_CHAR) :: sfile,refp0_s,refp0_ls_s
 
     ! External subprograms
@@ -435,12 +434,9 @@ contains
     logical, intent(in) :: F_withphy                   !run with physics
 
     ! Local variables
-    integer :: i,k,indx1,ntr,err,needinit,nvars,istat
-    character(len=SHORT_CHAR) :: bus
-    character(len=GMM_MAXNAMELENGTH) :: tr_name,iname,vname,oname,prefix,basename,time,ext, &
+    integer :: i,ntr,err,nvars,istat
+    character(len=GMM_MAXNAMELENGTH) :: vname,prefix,basename,time,ext, &
          hu_gmm_name,hu_short_name
-    character(len=GMM_MAXNAMELENGTH), dimension(MAX_TRACERS) :: varlist
-    logical :: hu_L,found
     type(tracer), dimension(:), allocatable :: tr_tmp
     type(phymeta), dimension(:), pointer :: pmeta
 
@@ -512,7 +508,7 @@ contains
     ! Local variables
     integer :: istat,i,j
     real, dimension(:,:), pointer :: fld2d
-    real, dimension(:,:,:), pointer :: fld,tr,adv,bkg
+    real, dimension(:,:,:), pointer :: fld,tr
     character(len=GMM_MAXNAMELENGTH) :: gmmname
     character(len=SHORT_CHAR), dimension(3) :: suffix=(/':PREV',':NEXT','     '/)
     type(pwvar), dimension(8) :: pw
@@ -663,10 +659,10 @@ contains
     logical, intent(in), optional :: F_diag             !Run calculations as diagnostic-only [.false.]
 
     ! Local variables
-    integer :: i,k,nk,istat,err
-    real :: irelax,my_dt,tmean,fcor
+    integer :: i,nk,istat
+    real :: irelax,my_dt,fcor
     real, dimension(:,:,:), allocatable :: wwm
-    real, dimension(:,:,:), pointer :: moins,plus,adv,bkg,pre,dyn,tt,pt,pm,ww,wz, &
+    real, dimension(:,:,:), pointer :: moins,plus,adv,bkg,dyn,pt,pm,ww,wz, &
          uu,vv,ug,vg
     character(len=GMM_MAXNAMELENGTH) :: gmmname
     type(gmm_metadata) :: meta
@@ -826,9 +822,6 @@ contains
     integer, intent(in) :: F_stepno                     !time step number
 
     ! Local variables
-    integer :: istat
-    real, dimension(:,:,:), pointer :: fld
-    type(gmm_metadata) :: meta
 
     ! Emulate model-specific post-dynamics operations
     select case (trim(emulate))
@@ -869,13 +862,11 @@ contains
     integer, parameter :: COMPATIBILITY_LVL=19
 
     ! Local variables
-    integer :: dateo,bidon,err,i,lght,soit,level_kind_diag,zuip,ztip
-    integer, dimension(14) :: idate
+    integer :: dateo,err,level_kind_diag,zuip,ztip
     real :: zu,zt,gwd_sig
     real, dimension(p_nk) :: std_p_prof
     real, dimension(:), pointer :: pres_prof=>null()
-    character(len=SHORT_CHAR) :: bus
-    logical :: prout,satuco
+    logical :: prout
 
     ! Check if STDOUT is requested
     prout = .false.
@@ -978,7 +969,6 @@ contains
 
     ! Local variables
     integer :: err
-    integer, save :: l_phy_gid=-1
 
     ! Create grid-specific fields (must be after the input files are read, not in prof_phy_init)
     if (F_stepno == 0) then
@@ -1031,7 +1021,6 @@ contains
     integer, intent(out) :: F_istat                     !return status
 
     ! Local variables
-    integer :: istat
     real, dimension(:,:), pointer :: wrk1
     real(kind=8) :: deg2rad
 
@@ -1373,21 +1362,20 @@ contains
     end type field
 
     ! Local variables
-    integer :: ier,iun,version,hlen,i,j,k,nvar2d,pos,istat,nvar3d,nlevs,kind,gid, &
-         ig1,ig2,ig3,ig4,nread_tr,nk_ptr
+    integer :: ier,iun,version,hlen,i,j,k,nvar2d,pos,istat,nvar3d,nlevs,kind, &
+         nread_tr,nk_ptr
     real :: lat,lon,tmean,tlev,alpha,elev
     real, save :: file_lat,file_lon
     real, dimension(1,1,MAX_LEVELS) :: data,plevs
     real, dimension(MAX_LEVELS) :: levs,qh,tv
-    real, dimension(:), pointer :: gx=>null(),gy=>null()
     real, dimension(:,:), pointer :: ptr2d,p0
     real, dimension(:,:,:), pointer :: ptr3d,presm,prest,pres
-    character(len=SHORT_CHAR) :: date_check,staglev,interp,gtype,topo_interp
+    character(len=SHORT_CHAR) :: date_check,staglev,interp,topo_interp
     character(len=SHORT_CHAR), dimension(MAX_TRACERS) :: read_tr
     character(len=LONG_CHAR) :: fname,ftype,var_check,mode,fprefix
     character(len=GMM_MAXNAMELENGTH) :: gmmname,prefix,basename,time,ext
     character(len=GMM_MAXNAMELENGTH), dimension(MAXVARS) :: vars2d,vars3d
-    logical :: init,match,heights,found
+    logical :: init,match,heights
     type(gmm_metadata) :: meta
     type(field) :: tt,hu,pprof
 
@@ -1851,7 +1839,6 @@ contains
     ! Local variables
     integer :: i,j,output_list_len,ngmm,nphy,nbase,istat,buffer_id
     character(len=LONG_CHAR) :: oname,prefix,prefix_coord,varname,varname_mangled
-    character(len=LONG_CHAR), dimension(MAX_OUTPUTS) :: phy_varlist
     logical :: found,pre_init
     logical, save :: initialized=.false.
     type(gmm_metadata) :: meta
@@ -1968,7 +1955,7 @@ contains
     logical, intent(in), optional :: F_phy_L            !output physics variables [.false.]
 
     ! Local variables
-    integer :: i,j,istat,indx,len,init,err,oun,nbase
+    integer :: i,err,oun
     integer, save :: step_total
     integer, dimension(1), save :: dipm,dipt
     real, dimension(p_nk) :: hybm,hybt
@@ -1978,7 +1965,7 @@ contains
     character(len=SHORT_CHAR) :: current_date
     character(len=LONG_CHAR) :: oname,fname
     character(len=LONG_CHAR), save :: prefix,prefix_coord,ext
-    logical :: my_dyn_L,my_phy_L,found,hdr,base_init
+    logical :: my_dyn_L,my_phy_L,hdr,base_init
     logical, save :: initialized=.false.,hdr_diagm=.true.,hdr_diagt=.true.
     type(gmm_metadata) :: meta
     type(phymeta) :: pmeta
@@ -2168,8 +2155,7 @@ contains
     ! Local variables
     integer :: oun,err,i
     integer, save :: output_buffer_count=0
-    real :: fldmax
-    character(len=LONG_CHAR) :: fmode,clen,fmt,index_format,ISOdate,cpre,cpre6
+    character(len=LONG_CHAR) :: clen,fmt,index_format,ISOdate
     character(len=LONG_CHAR), save :: active_date=''
     character(len=LONG_CHAR), dimension(:), allocatable, save :: date_buffer
     logical, save :: flush_buffer=.false.
@@ -2272,7 +2258,7 @@ contains
     real, dimension(:,:), pointer :: me,p0
     real, dimension(:,:,:), allocatable :: tv,qh
     real, dimension(:,:,:), pointer :: moins,plus,tt,hu,pt,pm,tr
-    character(len=GMM_MAXNAMELENGTH) :: trname,prefix,basename,time,ext
+    character(len=GMM_MAXNAMELENGTH) :: prefix,basename,time,ext
 
     ! Update coordinate
     call prof_update_pres()
@@ -2699,7 +2685,6 @@ contains
 
     ! Local variables
     integer :: i
-    character(len=GMM_MAXNAMELENGTH) :: gmmname
     character(len=LONG_CHAR) :: reason
     type(gmmterm), dimension(8), parameter :: forcing_list = (/ &
          gmmterm(gmmk_adv_t_s,gmmk_dyn_t_s,'Advection','thermodynamic'), &
