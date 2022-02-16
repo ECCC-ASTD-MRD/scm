@@ -871,7 +871,7 @@ contains
     ! Local variables
     integer :: dateo,bidon,err,i,lght,soit,level_kind_diag,zuip,ztip
     integer, dimension(14) :: idate
-    real :: zu,zt,cond_sig,gwd_sig
+    real :: zu,zt,gwd_sig
     real, dimension(p_nk) :: std_p_prof
     real, dimension(:), pointer :: pres_prof=>null()
     character(len=SHORT_CHAR) :: bus
@@ -935,11 +935,8 @@ contains
 
     ! Complete physics filtering handshake (implemented as profile copies at each step)
     err = WB_OK
-    if (.not.WB_IS_OK(wb_get('phy/cond_infilter',cond_sig))) cond_sig=-1.
-    if (cond_sig > 0.) call msg(MSG_WARNING,'(prof_phy_init) Option cond_infilter is ignored by the SCM')
     if (.not.WB_IS_OK(wb_get('phy/sgo_tdfilter',gwd_sig))) gwd_sig=-1.
     if (gwd_sig > 0.) call msg(MSG_WARNING,'(prof_phy_init) Option sgo_tdfilter is ignored by the SCM')
-    err = min(wb_put('dyn/cond_infilter',cond_sig), err)
     err = min(wb_put('dyn/sgo_tdfilter',gwd_sig), err)
     call handle_error_l(WB_IS_OK(err),'prof_phy_init','Error in physics filtering handshake')
 
