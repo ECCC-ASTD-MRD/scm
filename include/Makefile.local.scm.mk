@@ -78,7 +78,7 @@ SCM_ABS       = $(SCM_STD_TARGETS) scm
 SCM_ABS_FILES = $(foreach item,$(SCM_STD_TARGETS),$(BINDIR)/$(item)) $(BINDIR)/$(mainscm)
 
 ## SCM model Libpath and libs
-MODEL3_LIBPATH = $(LIBCPLPATH)
+MODEL4_LIBPATH = $(LIBCPLPATH)
 
 ## System-wide definitions
 
