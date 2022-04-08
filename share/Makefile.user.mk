@@ -62,7 +62,7 @@ endif
 ## Step 3: Execute the following commands
 ## make dep       #mandatory
 ## make -j9 libs  #mandatory
-## make -j9 bins
+## make -j9 scm
 
 ## ==== For SCM developers [END] ====================================
 
