@@ -3,9 +3,9 @@
 # Read thermodynamic constants
 utils.read.constants<-function(){
     # Read and parse the constants file into a list
-    afsisio<-Sys.getenv('AFSISIO',unset=NA)
-    if (is.na(afsisio)){stop('Error: Environment variable AFSISIO must be defined for constants')}
-    fn<-paste(afsisio,'datafiles','constants','thermoconsts',sep='/')
+    cmcconst<-Sys.getenv('CMCCONST',unset=NA)
+    if (is.na(cmcconst)){stop('Error: Environment variable CMCCONST must be defined for constants')}
+    fn<-paste(cmcconst,'thermoconsts',sep='/')
     c<-read.table(fn,colClasses=c("character","double",rep("NULL",max(count.fields(fn)-2))),fill=TRUE,header=FALSE)
     const<-list()
     for (i in 1:nrow(c)){const[c[i,1]]<-c[i,2]}
