@@ -73,7 +73,7 @@ cat > ${taskcfg} <<EOF
 # </input>
 # <executables>
 # ATM_SCM.Abs        mainscm_\${BASE_ARCH}.Abs
-# remote_copy        r.scp
+# remote_copy        scp
 # readlink           r.read_link
 # r.run_in_parallel  r.run_in_parallel
 # </executables>
