@@ -473,13 +473,13 @@ subroutine fst2ptxt()
      ! Set write formatting
      levfmt = 'i10'
      write(cmax_levels,'('//trim(levfmt)//')') 2*MAX_LEVELS
-     datafmt = '(a,x,'//trim(levfmt)//',2(x,a),'//trim(cmax_levels)//'(x,es14.6))'
+     datafmt = '(a,1x,'//trim(levfmt)//',2(1x,a),'//trim(cmax_levels)//'(1x,es14.6))'
      
      ! Write generic header
      !   type, version, header_length
      !   mode, kind, lat, lon, elev, hinterp, date
-     write(fdout,'(a,x,i1,x,i1)') 'PTXT',1,4
-     write(fdout,'(a,x,i1,3(x,f14.8),2(x,a))') 'linear',5,lat,lon,me,trim(interp),trim(date)
+     write(fdout,'(a,1x,i1,1x,i1)') 'PTXT',1,4
+     write(fdout,'(a,1x,i1,3(1x,f14.8),2(1x,a))') 'linear',5,lat,lon,me,trim(interp),trim(date)
 
      ! Write initializing data or compute/write derived fields
      initialization: if (init) then
@@ -488,8 +488,8 @@ subroutine fst2ptxt()
         !   n_sfc, sfc_varnames
         !   n_vars, atm_varnames
         write(maxfld,'(i10)') 4+ntr
-        write(fdout,'(i1,x,a)') 1,trim(fld(ip0)%out)
-        write(fdout,'(a,x,'//trim(maxfld)//'(x,a))') trim(maxfld),trim(fld(iuu)%out),trim(fld(ivv)%out), &
+        write(fdout,'(i1,1x,a)') 1,trim(fld(ip0)%out)
+        write(fdout,'(a,1x,'//trim(maxfld)//'(1x,a))') trim(maxfld),trim(fld(iuu)%out),trim(fld(ivv)%out), &
              trim(fld(itt)%out),trim(fld(iww)%out),(trim(fld(i)%out),i=itr,itr+ntr-1)
 
         ! Write individual fields
@@ -639,8 +639,8 @@ subroutine fst2ptxt()
         call add_to_header(fld(itt_dyn),header_entries,k)
         call add_to_header(fld(ihu_dyn),header_entries,k)
         write(maxfld,'(i10)') k
-        write(fdout,'(i1,x,a)') 1,trim(fld(ip0)%out)
-        write(fdout,'(a,x,'//trim(maxfld)//'(x,a))') trim(maxfld),trim(header_entries)
+        write(fdout,'(i1,1x,a)') 1,trim(fld(ip0)%out)
+        write(fdout,'(a,1x,'//trim(maxfld)//'(1x,a))') trim(maxfld),trim(header_entries)
  
         ! Write prescribed (pre-interpolated) P0
         write(fdout,datafmt) trim(fld(ip0)%out),1,trim(fld(ip0)%lev),'none',p0,p0

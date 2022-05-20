@@ -1860,7 +1860,7 @@ contains
 
     ! Check for output pre-initialization
     call prof_output_pre_init(F_initialized=pre_init)
-    call handle_error_l(pre_init==.true.,'prof_output_post_init','Missing pre-initialization of the output system')
+    call handle_error_l(pre_init,'prof_output_post_init','Missing pre-initialization of the output system')
 
     ! Get length of output list request
     output_list_len=0; i=0
@@ -1990,7 +1990,7 @@ contains
 
        ! Check for output system base initialization
        call prof_output_post_init(F_initialized=base_init)
-       call handle_error_l(base_init==.true.,'prof_output','Base initialization is required before call to prof_output()')
+       call handle_error_l(base_init,'prof_output','Base initialization is required before call to prof_output()')
 
        ! Set file prefix and extension
        call prof_output_prefix(prefix,prefix_coord)
