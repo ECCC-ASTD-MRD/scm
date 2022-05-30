@@ -961,7 +961,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine prof_phy_step(F_stepno,F_lctl_step)
     ! Perform necessary steps from itf_phy_step().  Prepare buses and call physics step.
-    use phy_itf, only: phy_input,phy_step
+    use phy_itf, only: phy_input1, phy_step
 
     implicit none
 
@@ -979,7 +979,7 @@ contains
     endif
 
     ! Process physics inputs
-    err = phy_input(prof_phy_prefold_opr,F_stepno,trim(path_inputs_s)//'/physics_input_table', &
+    err = phy_input1(prof_phy_prefold_opr,F_stepno,trim(path_inputs_s)//'/physics_input_table', &
          trim(path_inputs_s)//'/','GEOPHY/Scm_geophy.fst')
     call handle_error(err,'prof_phy_step','Acquiring input data')
 
