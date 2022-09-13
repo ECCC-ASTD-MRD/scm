@@ -1340,6 +1340,7 @@ contains
     ! Read an input file.
     use tdpack, only: RGASD,GRAV
     use vertical_interpolation, only: vertint2
+    use phy_itf, only: phy_getmeta, phymeta
 
     implicit none
 
@@ -1379,6 +1380,7 @@ contains
     character(len=GMM_MAXNAMELENGTH), dimension(MAXVARS) :: vars2d,vars3d
     logical :: init,match,heights
     type(gmm_metadata) :: meta
+    type(phymeta) :: pmeta
     type(field) :: tt,hu,pprof
 
     ! Set default values
@@ -1608,9 +1610,17 @@ contains
           call handle_error_l(.not.((gmmname == gmmk_pre_ww_s .and. prof_is_valid(gmmk_pre_wz_s)) .or. &
                (gmmname == gmmk_pre_wz_s .and. prof_is_valid(gmmk_pre_ww_s))), &
                'prof_read_data','Only one of PRE_WW and PRE_WT1 can be defined')
+          ! Confirm validity of GMM name and fall back to base name if necessary
+          if (.not.GMM_IS_OK(gmm_get(gmmname,ptr3d))) then
+             call gmmx_name_parts(gmmname,prefix,basename,time,ext)
+             call handle_error_l(RMN_IS_OK(phy_getmeta(pmeta,basename)),'prof_read_data', &
+                  'Cannot find '//trim(var_check)//' as '//trim(basename)//' in physics variable database')
+             gmmname = pmeta%vname
+             istat = clib_toupper(gmmname)
+             call handle_error_l(GMM_IS_OK(gmm_get(gmmname,ptr3d)),'prof_read_data',&
+                  'Invalid GMM entry (3D) for '//trim(var_check))
+          endif
           ! Add record to GMM
-          istat = gmm_get(gmmname,ptr3d)
-          call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry (3D) for '//trim(gmmname))
           call prof_make_valid(gmmname)
           call vertint2(ptr3d,pres(:,:,1:size(ptr3d,dim=3)),size(ptr3d,dim=3), &
                data(:,:,1:nlevs),plevs(:,:,1:nlevs),nlevs,1,1,1,1,1,1,1,1,varname=var_check,inttype=interp)
