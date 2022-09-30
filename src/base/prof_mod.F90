@@ -861,7 +861,7 @@ contains
     logical, intent(out) :: F_withphy                   !run with physics
 
     ! Local parameters
-    integer, parameter :: COMPATIBILITY_LVL=19
+    integer, parameter :: COMPATIBILITY_LVL=20
 
     ! Local variables
     integer :: dateo,err,level_kind_diag,zuip,ztip
