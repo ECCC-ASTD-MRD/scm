@@ -861,7 +861,7 @@ contains
     logical, intent(out) :: F_withphy                   !run with physics
 
     ! Local parameters
-    integer, parameter :: COMPATIBILITY_LVL=19
+    integer, parameter :: COMPATIBILITY_LVL=20
 
     ! Local variables
     integer :: dateo,err,level_kind_diag,zuip,ztip
@@ -2084,9 +2084,9 @@ contains
              oname = pmeta%oname
              if (out_phy(i)%prefix == prefix_coord) oname = out_phy(i)%oname
              err = clib_toupper(oname)
-             call prof_output_special(oname,ptr3d(:,:,1:pmeta%n(3)))
+             call prof_output_special(oname,ptr3d(:,:,1:pmeta%nlcl(3)))
              call prof_write(trim(out_phy(i)%prefix)//trim(oname)//trim(ext),out_phy(i)%need_header, &
-                  out_phy(i)%buffer_id,trim(out_phy(i)%format),current_date,ptr3d(1,1,1:pmeta%n(3)),F_stepno==step_total)
+                  out_phy(i)%buffer_id,trim(out_phy(i)%format),current_date,ptr3d(1,1,1:pmeta%nlcl(3)),F_stepno==step_total)
           else
              out_phy(i)%is_found = .false.
           endif
