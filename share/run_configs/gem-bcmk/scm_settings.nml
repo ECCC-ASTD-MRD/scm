@@ -50,7 +50,7 @@
  KFCTRIGL         = 0.01       ,
  KFCTRIGLAT       = .true.     ,
  TRIGLAT          = 25.,30.    ,
- SHAL             = 'ktrsnt_mg',
+ SHAL             = 'ktrsnt',
 
  /
 
@@ -60,7 +60,7 @@
  KNTRAD_S         = '1h'       ,
  STRATOS          = .true.     ,
 
- GWDRAG           = 'gwd86'    ,
+ GWDRAG           = 'sgo16'    ,
  NON_ORO          = .true.     ,
  LMETOX           = .true.     , 
 

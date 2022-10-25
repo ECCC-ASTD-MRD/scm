@@ -36,7 +36,6 @@
  LIMSNODP         = .true.     ,
  SCHMSOL          = 'isba'     ,
  Z0TLAT           = 25.,30.    ,
- ISBA_I1_MINVAL   = .false.    ,
 
  /
 
@@ -74,6 +73,7 @@
 zta=-1.,
 zua=-1.,
 kticefrac=.false.,
+ISBA_I1_MINVAL   = .false.    ,
 /
 &__rpnphy_upcfg__
 orig_version=6.0.b7,

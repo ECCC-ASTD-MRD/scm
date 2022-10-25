@@ -38,8 +38,8 @@
  SCHMSOL          = 'isba'     ,
  Z0TLAT           = 25.,30.    ,
  SALTY_QSAT       = .true.,
- Z0TRDPS300       = .true.,
  BETA             = 1.
+ Z0TTYPE          = 'DEACU12'
 
  /
 
@@ -63,7 +63,7 @@
  KNTRAD_S         = '1h'       ,
  STRATOS          = .true.     ,
 
- GWDRAG           = 'gwd86'    ,
+ GWDRAG           = 'sgo16'    ,
  NON_ORO          = .true.     ,
  hines_flux_filter= 5
  LMETOX           = .true.     , 
@@ -86,6 +86,7 @@ zua=-1.,
 kticefrac=.false.,
 radfltr=.false.,
 ts_flxir=.true.,
+Z0TRDPS300       = .true.,
 /
 &__rpnphy_upcfg__
 orig_version=6.0.b7,
