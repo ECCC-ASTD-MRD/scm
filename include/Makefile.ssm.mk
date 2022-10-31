@@ -61,7 +61,7 @@ rm_scm_ssm_all:
 $(BUILDSSM)/$(SCM_SSMALL_NAME):  scm_ssmusedep_bndl scm_atm_model_bndl scm_atm_model_dstp
 	rm -rf $@ ; mkdir -p $@ ; \
 	rsync -av --exclude-from=$(DIRORIG_scm)/.ssm.d/exclude $(DIRORIG_scm)/ $@/ ; \
-	echo "Dependencies (s.ssmuse.dot): " > $@/BUILDINFO ; \
+	echo "Dependencies (r.load.dot): " > $@/BUILDINFO ; \
 	cat $@/ssmusedep.bndl >> $@/BUILDINFO ; \
 	.rdemk_ssm_control scm $(SCM_VERSION) all $@/BUILDINFO $@/DESCRIPTION > $@/.ssm.d/control
 	.rdemkversionfile scm $(SCM_VERSION) $@/include/$(EC_ARCH) sh
