@@ -119,9 +119,9 @@ ifneq (,$(filter intel%,$(COMP_ARCH))$(filter PrgEnv-intel%,$(COMP_ARCH)))
    ifneq (,$(filter PrgEnv-intel%,$(COMP_ARCH)))
       ## NETCDFLIBS = netcdff netcdf hdf5_hl hdf5 dl m z curl  #RON
       ## NETCDFLIBS = netcdff netcdf hdf5hl_fortran hdf5_hl hdf5_fortran hdf5 z curl  #COSP
-      NETCDFLIBS = netcdff netcdf hdf5hl_fortran hdf5_hl hdf5_fortran hdf5 dl m z
+      NETCDFLIBS = -Bdynamic netcdff netcdf hdf5hl_fortran hdf5_hl hdf5_fortran hdf5 dl m z
    else
-      NETCDFLIBS = netcdff netcdf hdf5hl_fortran hdf5_hl hdf5_fortran hdf5 dl m z curl  #SuperSet
+      NETCDFLIBS = -Bdynamic netcdff netcdf hdf5hl_fortran hdf5_hl hdf5_fortran hdf5 dl m z curl  #SuperSet
    endif
 endif
 #endif
