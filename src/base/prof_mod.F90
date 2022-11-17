@@ -21,6 +21,7 @@
 
 module prof_mod
   use, intrinsic :: iso_fortran_env, only: REAL64, INT64
+  use rmn_gmm 
   use clib_itf_mod
   use wb_itf_mod
   use vGrid_Descriptors, only: vgrid_descriptor
@@ -28,7 +29,6 @@ module prof_mod
 
   private
 
-#include <mu_gmm.hf>
 !!!#include <arch_specific.hf>
 
   ! Module parameters
@@ -855,7 +855,7 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <msg.h>
+#include <rmn/msg.h>
 
     ! Output arguments
     logical, intent(out) :: F_withphy                   !run with physics
@@ -1017,7 +1017,7 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <msg.h>
+#include <rmn/msg.h>
 
     ! Output arguments
     integer, intent(out) :: F_istat                     !return status
@@ -1827,7 +1827,7 @@ contains
     implicit none
 
 #include <rmnlib_basics.hf>
-#include <msg.h>
+#include <rmn/msg.h>
 
     ! Output arguments
     logical, intent(out), optional :: F_initialized             !Initialization status of output system
