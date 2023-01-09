@@ -175,6 +175,9 @@ done
 _setenvfile=${CONST_RDE_SETENV_DOT}
 cat > ${_setenvfile} <<EOF
 if [[ -z "\${SCM_MODEL_BNDL}" ]] ; then
+   if [[ "x\$(echo \${SSM_SHORTCUT_PATH} | grep '/fs/ssm/eccc/mrd/rpn/MIG:')" == "x" ]] ; then
+      export SSM_SHORTCUT_PATH=/:/fs/ssm:/fs/ssm/eccc:/fs/ssm/eccc/mrd/rpn:/fs/ssm/eccc/mrd/rpn/MIG:\${SSM_SHORTCUT_PATH}
+   fi
    . r.load.dot ${SCM_MODEL_BNDL}
 elif [[ \${SCM_MODEL_BNDL} != ${SCM_MODEL_BNDL} ]] ; then
    cat 1>&2 <<EOF1
