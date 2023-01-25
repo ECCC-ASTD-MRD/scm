@@ -51,3 +51,4 @@ scm=2.2.0-a19;scmdyn=2.2.0-a19;rpnphy=6.2.0-a19;modelutils=1.7.0-a19;modelscript
 scm=2.2.0-a20;scmdyn=2.2.0-a20;rpnphy=6.2.0-a20;modelutils=1.7.0-a20;modelscripts=5.2.0-a20;rde=1.1.15
 scm=2.2.0-a21;scmdyn=2.2.0-a21;rpnphy=6.2.0-a21;modelutils=1.7.0-a21;modelscripts=5.2.0-a21;rde=1.1.15
 scm=2.2.0-a22;scmdyn=2.2.0-a22;rpnphy=6.2.0-a22;modelutils=1.7.0-a22;modelscripts=5.2.0-a22;rde=1.1.15
+scm=2.2.0-a22-dev;scmdyn=2.2.0-a22-dev;rpnphy=6.2.0-a23;modelutils=1.7.0-a22-dev;modelscripts=5.2.0-a22-dev;rde=1.1.15-dev
