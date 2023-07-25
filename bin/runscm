@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 arguments=$*
 set -e
 
@@ -45,7 +46,11 @@ default_inrep=${SCM_MODEL_DFILES}/dfiles/gabls-3
 default_anal=${SCM_MODEL_DFILES}/dfiles/gabls-3/analysis/2006070112_000
 default_climato=${SCM_MODEL_DFILES}/dfiles/gabls-3/climato/clim.gabls
 default_geophy=${SCM_MODEL_DFILES}/dfiles/gabls-3/geophy/geo.gabls
-default_phytb=${scm_DIR}/src/rpnphy/include/physics_input_table_GENERIC
+# Adapt default_phytb for SSM package
+#   default_phytb=${scm_DIR}/src/rpnphy/include/physics_input_table_GENERIC
+    default_phytab=${SCM_STORAGE_DIR:+${scm_DIR}/src/rpnphy/include}
+    default_phytab=${default_phytab:-${scm_DIR}/share/rpnphy}
+    default_phytb=${default_phytab}/physics_input_table_GENERIC
 default_ozone=${ATM_MODEL_DFILES}/datafiles/constants/ozoclim_Fortuin_Kelder1998
 default_irtab=${ATM_MODEL_DFILES}/datafiles/constants/irtab5_std
 default_const=${ATM_MODEL_DFILES}/datafiles/constants/thermoconsts
@@ -54,6 +59,7 @@ default_xfer=${here}/results
 
 # Parse the output file path
 xfer_full=${xfer:-${default_xfer}}/${exp}
+mkdir -p ${xfer_full}
 
 # Generate a temporary configuration file
 taskcfg=${TMPDIR}/scm_$$.cfg
