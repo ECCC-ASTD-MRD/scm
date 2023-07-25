@@ -25,9 +25,3 @@ plugins=winds,theta
 # the package standard
 plugin_path=
 
-[linkit]
-# Set "flat" to True to have the linkit utility link the SCM results/ subdirectory
-# directly to the value defined by the environment variable $scm_results, without 
-# the usual experiment-specific subdirectory structure
-flat=False
-

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Source this file to:
+# - set some environment variables
+# - set PATH to find SCM binaries and scripts
+
+if [[ $# -eq 0 ]] ; then
+    echo "Usage:   . ./.common_setup compiler_suite"
+    echo "Example: . ./.common_setup gnu"
+    echo "Example: . ./.common_setup intel"
+else
+    unset SCM_ARCH SCM_WORK SCM_STORAGE_DIR scm_DIR
+    export OMP_STACKSIZE=4G
+
+    export COMPILER_SUITE=${1}
+    platform=$(utils/os.sh)
+    if [ -z "${EC_ARCH}" ]; then
+        COMPILER_VERSION=$(utils/compiler.sh ${COMPILER_SUITE})
+        export COMPILER_VERSION
+    fi
+
+    if [ -n "${platform}" -a "${COMPILER_VERSION}" != "Unknown_Compiler" ]; then
+        export SCM_ARCH=${platform}-${COMPILER_SUITE}-${COMPILER_VERSION}
+        export SCM_WORK=work-${SCM_ARCH}
+        
+        if [ -n "${storage_model}" ] ; then
+           DIR=$(echo $(basename $(dirname $PWD))/$(basename $PWD))
+           SCM_STORAGE_DIR=${storage_model}/SCM/${DIR}/${SCM_ARCH}
+        else
+           SCM_STORAGE_DIR=${PWD}
+        fi
+        export SCM_STORAGE_DIR
+        export scm_DIR=$PWD
+        export ATM_MODEL_VERSION=`cat MANIFEST | sed -n '/VERSION/s/.*: //p'`
+        export SCM_MODEL_DFILES=${scm_DIR}/scm_dbase
+        export ATM_MODEL_DFILES=${scm_DIR}/gem_dbase
+        export CMCCONST=${ATM_MODEL_DFILES}/datafiles/constants
+        export PATH=${PWD}/bin:${PWD}/${SCM_WORK}/bin:${PATH}
+        export TMPDIR=${TMPDIR-$(mktemp -d /tmp/$USER-XXXX)}
+        # exporting some paths needed by SCM
+        export PYTHONPATH=${PWD}/lib:${PYTHONPATH}
+        export SCM_SCRIPTS_LIBPATH=${PWD}/lib
+        export SCMDIAG_PLUGIN_PATH=${PWD}/lib/plugins/scmdiag
+    fi
+fi
+
+export PYTHONDONTWRITEBYTECODE=true
+
+unset platform
+
+# Shortcut commands for cmake and make
+alias cado=${PWD}/cado
+
+# Autocomplete for commands
+source ./_cado

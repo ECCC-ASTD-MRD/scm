@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     # Retrieve user configuration
     config = ConfigParser.SafeConfigParser()
-    config.read([os.path.join(os.getenv('scm'),'share','default_config'),os.path.join(os.getenv('HOME'),'.scmrc')])
+    config.read([os.path.join(os.getenv('scm_DIR'),'share','default_config'),os.path.join(os.getenv('HOME'),'.scmrc')])
     show_default = config.get('tsplot','display_application')
     collist_default = config.get('tsplot','colour_list')
 

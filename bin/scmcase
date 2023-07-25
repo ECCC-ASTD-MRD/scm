@@ -18,7 +18,7 @@ eval `cclargs $0 \
  ++ $arguments`
 
 # List available cases
-case_configs=${scm}/share/run_configs
+case_configs=${scm_DIR}/share/run_configs
 if [[ ${list} -gt 0 ]] ; then
    echo ""
    for config in $(ls -d ${case_configs}/*); do

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Source this file to:
+# - Create the build and work directories for the specific architecture and compiler versions
+#   according to the existence or not of the storage_model environment variable
+# If these directories already exist, they will be deleted, and recreated.
+# Additionally, a setup file is copied in the work directory as a shortcut.
+
+if [ -n "${SCM_STORAGE_DIR}" -a -n "${SCM_ARCH}" -a -n "${SCM_WORK}" ] ; then
+    if [ -n "${storage_model}" ] ; then
+        /bin/rm -rf ${SCM_STORAGE_DIR} build-${SCM_ARCH} ${SCM_WORK}
+        mkdir -p ${SCM_STORAGE_DIR}/work
+        mkdir -p ${SCM_STORAGE_DIR}/build
+        ln -sf ${SCM_STORAGE_DIR}/build ${PWD}/build-${SCM_ARCH}
+        ln -sf ${SCM_STORAGE_DIR}/work ${PWD}/${SCM_WORK}
+    else
+        /bin/rm -rf build-${SCM_ARCH} ${SCM_WORK}
+        mkdir -p build-${SCM_ARCH} ${SCM_WORK}
+    fi
+
+    if [ -n "${EC_ARCH}" ]; then
+        if [ "$COMPILER_SUITE" == "intel" ] ; then
+            SETUP_FILE=.eccc_setup_intel
+        else
+            SETUP_FILE=.eccc_setup_gnu
+        fi
+
+cat > ${PWD}/${SCM_WORK}/.eccc_setup <<EOF
+ici=\$PWD
+cd ${scm_DIR}
+. $SETUP_FILE
+cd \$ici
+EOF
+    fi
+else
+    echo "SCM environment variables not set! Make sure you use .common_setup script first."
+fi

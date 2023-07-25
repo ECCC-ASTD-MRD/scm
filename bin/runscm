@@ -45,7 +45,7 @@ default_inrep=${SCM_MODEL_DFILES}/dfiles/gabls-3
 default_anal=${SCM_MODEL_DFILES}/dfiles/gabls-3/analysis/2006070112_000
 default_climato=${SCM_MODEL_DFILES}/dfiles/gabls-3/climato/clim.gabls
 default_geophy=${SCM_MODEL_DFILES}/dfiles/gabls-3/geophy/geo.gabls
-default_phytb=${rpnphy}/include/physics_input_table_GENERIC
+default_phytb=${scm_DIR}/src/rpnphy/include/physics_input_table_GENERIC
 default_ozone=${ATM_MODEL_DFILES}/datafiles/constants/ozoclim_Fortuin_Kelder1998
 default_irtab=${ATM_MODEL_DFILES}/datafiles/constants/irtab5_std
 default_const=${ATM_MODEL_DFILES}/datafiles/constants/thermoconsts
@@ -63,7 +63,7 @@ cat > ${taskcfg} <<EOF
 # ANALYSIS            ${anal:-${default_anal}}
 # CLIMATO             ${climato:-${default_climato}}
 # GEOPHY              ${geophy:-${default_geophy}}
-# constantes          ${const:-${cdefault_onst}}
+# constantes          ${const:-${default_const}}
 # ozone_clim.fst      ${ozone:-${default_ozone}}
 # rad_table.fst       ${radtab:-${default_irtab}}
 # physics_input_table ${phy_intable:-${default_phytb}}
@@ -72,9 +72,8 @@ cat > ${taskcfg} <<EOF
 # MODEL_INPUT/        ${model_input} ${ATM_MODEL_DFILES}/datafiles/modeldata/*
 # </input>
 # <executables>
-# ATM_SCM.Abs        mainscm_\${BASE_ARCH}.Abs
+# ATM_SCM.Abs        mainscm
 # remote_copy        scp
-# readlink           r.read_link
 # r.run_in_parallel  r.run_in_parallel
 # </executables>
 # <output>
@@ -118,7 +117,7 @@ cd ${here}
 # Transfer files to requested directory
 src=${TASK_WORK}/spool
 set +e
-dest=$(${TASK_BIN}/readlink ${TASK_OUTPUT}/xfer)
+dest=$(readlink -e ${TASK_OUTPUT}/xfer)
 log=${TASK_WORK}/xfer.log
 ${TASK_BIN}/remote_copy -r ${src}/* ${dest} >${log} 2>&1
 if [[ $? == 0 ]] ; then
