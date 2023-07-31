@@ -16,7 +16,7 @@ mkdir -p ${profileDirPath}
 cat > ${profilePath} << EOF
 #----- Add the <PackageName>_DIR variable for cmake builds
 export ${packageName%%_*}_DIR="$packageHome"
-export PATH="$packageHome/bin:\$PATH"
+export PATH="$packageHome/scripts:\$PATH"
 export ATM_MODEL_VERSION=@SCM_VERSION@
 export SCM_MODEL_DFILES=/fs/ssm/eccc/mrd/rpn/MIG/SCM/d/scm-data/scm-data_0.15.1_all
 export ATM_MODEL_DFILES=/fs/ssm/eccc/mrd/rpn/MIG/GEM/d/gem-data/gem-data_4.2.0/gem-data_4.2.0_all/share/data/dfiles
@@ -30,7 +30,7 @@ EOF
 cat > ${loginPath} << EOF
 #----- Add the <PackageName>_DIR variable for cmake builds
 setenv ${packageName%%_*}_DIR "$packageHome"
-setenv PATH="$packageHome/bin:\$PATH"
+setenv PATH="$packageHome/scripts:\$PATH"
 setenv ATM_MODEL_VERSION @SCM_VERSION@
 setenv SCM_MODEL_DFILES=/fs/ssm/eccc/mrd/rpn/MIG/SCM/d/scm-data/scm-data_0.15.1_all
 setenv ATM_MODEL_DFILES=/fs/ssm/eccc/mrd/rpn/MIG/GEM/d/gem-data/gem-data_4.2.0/gem-data_4.2.0_all/share/data/dfiles

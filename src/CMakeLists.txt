@@ -45,7 +45,7 @@ add_subdirectory(rpnphy rpnphy)
 add_subdirectory(scm scm)
 
 # To be installed only with package
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/bin/" DESTINATION bin USE_SOURCE_PERMISSIONS PATTERN "link-dbase.sh" EXCLUDE)
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/scripts" DESTINATION scripts USE_SOURCE_PERMISSIONS PATTERN "link-dbase.sh" EXCLUDE)
 install(FILES "${CMAKE_SOURCE_DIR}/share/default_config" DESTINATION share)
 install(FILES "${CMAKE_SOURCE_DIR}/share/README-SCM" DESTINATION share)
 install(FILES "${CMAKE_SOURCE_DIR}/src/rpnphy/include/physics_input_table_GENERIC" DESTINATION share/rpnphy)

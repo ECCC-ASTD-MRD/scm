@@ -35,7 +35,7 @@ else
         export SCM_MODEL_DFILES=${scm_DIR}/scm_dbase
         export ATM_MODEL_DFILES=${scm_DIR}/gem_dbase
         export CMCCONST=${ATM_MODEL_DFILES}/datafiles/constants
-        export PATH=${PWD}/bin:${PWD}/${SCM_WORK}/bin:${PATH}
+        export PATH=${PWD}/scripts:${PWD}/${SCM_WORK}/bin:${PATH}
         export TMPDIR=${TMPDIR-$(mktemp -d /tmp/$USER-XXXX)}
         # exporting some paths needed by SCM
         export PYTHONPATH=${PWD}/lib:${PYTHONPATH}
