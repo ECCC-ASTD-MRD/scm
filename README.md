@@ -63,7 +63,7 @@ other submodules, or adding or removing source files):
 ```
 And before the first run, create these links to GEM and SCM databases
 ```
-./bin/link-dbase.sh
+./scripts/link-dbase.sh
 ```
 
 ## Building and installing SCM
