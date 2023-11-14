@@ -87,6 +87,11 @@ cat > ${taskcfg} <<EOF
 # </output>
 EOF
 
+if [ -z "${MAESTRO_VERSION}" ]; then
+    echo "Maestro is not loaded: using GOAS task setup scripts: $sps_DIR/scripts/goas_task_setup.dot"
+    export TASK_SETUP=goas_task_setup.dot
+fi
+
 # Run task setup to establish directory structure
 . ${TASK_SETUP:-task_setup.dot} --file=${taskcfg} --base=${basedir} --clean --verbose
 
