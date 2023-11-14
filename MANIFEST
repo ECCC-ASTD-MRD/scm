@@ -9,8 +9,8 @@ URL        : https://gitlab.science.gc.ca/MIG/scm
 DOC        : https://wiki.cmc.ec.gc.ca/wiki/SCM
 
 # Components
-modelutils = 1.7.0-rc1
-rpnphy = 6.2.0-rc3
+modelutils = 1.8.0-a1
+rpnphy = 6.3.0-a1
 
 # Dependencies
 #    =,<,<=,>,>= : Version rules
