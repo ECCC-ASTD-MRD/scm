@@ -7,3 +7,9 @@ scm_dbase
 /work*
 src/modelutils/include/modelutils_version.inc
 src/rpnphy/include/rpnphy_version.inc
+.ssmuse_scm
+suite
+configexp.cfg
+scm_settings.nml
+RUNSCM/
+results/
