@@ -4,59 +4,66 @@ Single Column Model (SCM) driver for RPNPhy: RPN, MRD, STB, ECCC, GC, CA
 This document is intended as a notebook and checklist for the SCM
 librarian. It is only valid on EC/CMC and GC/Science Networks.
 
-Quick Start: Building, Installing from Version Control
-======================================================
+Updating the scm depot for a release
+===========================================
 
-This section is just a condensed version of the steps needed to release from
-the git repository. It implies the mandatory steps for your SHELL env. setup
-and directories structure are already done. It also implies that the code is
-fully committed in the git repository and no other changes are needed.
-These steps needs to be done in the specified order.
+# Steps to be done in a SCM dev env.
 
-**TODO**: 
-
-General Information
-===================
-
-**TODO**: 
-
-Basic profile and directory setup
----------------------------------
-
-**TODO**: 
-
-  * list expected dir structure
-  * list expected env var and paths...
-  * gmake based
-  * supported compilers
-
-Layout
-------
-
-This repository is built following some conventions
-
-It contains the following sub-directories:
-
-  * `bin/       `: used for scripts, will be added to the `PATH`
-  * `include/   `: used for included files, will be added to the `INCLUDE_PATH`
-  * `lib/       `: will be added to the `LIBRARY_PATH`
-  * `lib/python/`: used for python modules, will be added to the `PYTHONPATH`
-  * `src/       `: used for source code, will be added to the source path (`VPATH`).
-  * `share/     `: used for any other content
-
-It contains the following files:
-
-  **TODO: Complete list with mandatory and optional**
-  * `.setenv.dot`:
-  * `bin/.env_setup.dot`:
-  * `VERSION`:
-
-  **TODO: Complete list of Mandatory Makefile vars and targets**
+... include code from contrubutors & test ...
+... see with RPN-SI if there are updates needed to the CMakeLists.txt ...
 
 Closing Issues
---------------
+==============
 
 **TODO**: review/close bugzilla issues
+
+
+Tests
+=====
+
+Make sure to test with GFortran and intel
+
+1st shell
+```
+. .ssmuse_scm intel
+. .intial_setup
+make cmake
+make -j4
+make work
+# ... run tests...
+```
+
+2nd shell
+```
+. .ssmuse_scm gnu
+. .intial_setup
+make cmake
+make -j4
+make work
+# ... run tests...
+```
+
+Finalize
+========
+
+# Steps to be done in a GEM dev env.
+
+# Update MANIFEST for VERSION and dep.
+```
+emacs src/rpnphy/MANIFEST
+```
+
+# Update versions_components file from MANIFEST info
+```
+emacs share/scm_versions_components.txt
+```
+
+# tag
+git tag scm_VERSION
+
+# Push on gitlab
+git push git@gitlab.science.gc.ca:MIG/scm.git
+git push --tags git@gitlab.science.gc.ca:MIG/scm.git
 
 
 Documentation update
@@ -65,131 +72,8 @@ Documentation update
 **TODO**: review doc on wiki
 
 
-Building, Installing from Version Control
-=========================================
-
-Getting the code
-----------------
-
-If not already done, you may clone the git repository and checkout
-the version you want to run/work on with the following command
-(example for version 2.1.a2):
-
-        NAME=scm
-        MYVERSION=2.1.a2                                  ## Obviously, you'll need to change this to the desired version
-        MYURL=git@gitlab.science.gc.ca:MIG/${NAME}        ## You'll need a GitLab.science account for this URL
-        ## MYURL=https://gitlab.science.gc.ca/MIG/${NAME}.git ## You cannot "git push" if you use the http:// URL
-        git clone ${MYURL} ${NAME}_${MYVERSION} ${NAME}
-        cd ${NAME}
-        git checkout -b ${NAME}_${MYVERSION}-${USER}-branch ${NAME}_${MYVERSION}
 
 
-Update Dependencies
--------------------
-
-**TODO**:
-
-  * Where/How to set change external dependencies (compiler, librmn, vgrid, rpn_comm, ...)
-  * Where/How to set compiler options, new compiler rules...
-
-
-Committing the Code
--------------------
-
-**TODO Pre-commit**:
-
-  * merge in code from other devs (and from other branches if any)
-  * update version number
-  * update bndl dependencies
-  * update nml updated data
-      * Update: share/nml_updater/upd/scm_nml_update_db.txt
-      * Update: share/nml_updater/upd/scm_versions_db.txt
-  * Update run_configs
-````bash
-    fromVer=    #TODO: set previous version of SCM for configs
-
-    VERSION="$(echo $(cat ${scm:-./scm}/include/Makefile.local*.mk | grep _VERSION0 | grep -v dir | cut -d= -f2))"
-    VERSION_V=${VERSION#*/}
-    for nml in share/run_configs/*/scm_settings.nml ; do
-       ./bin/scm_nml_updater --from ${fromVer} --to ${VERSION_V} -i ${nml}
-    done
-````
-  * test (testing section below)
-
-
-fromVer=    #TODO: set previous version of SCM for configs
-
-VERSION="$(echo $(cat ${scm:-./scm}/include/Makefile.local*.mk | grep _VERSION0 | grep -v dir | cut -d= -f2))"
-VERSION_V=${VERSION#*/}
-for nml in share/run_configs/*/scm_settings.nml ; do
-   ./bin/scm_nml_updater --from ${fromVer} --to ${VERSION_V} -i ${nml}
-done
-
-**TODO**:
-
-  * commit changes
-  * tag version
-  * push code and tags upstream (git push && git push --tags)
-
-
-Initial Setup
--------------
-
-Setting up the Shell Environment and Working Directories.
-
-The compiling, building and running systems depend on a few Shell
-(Bash is the only supported Shell to date) environment variables,
-PATHs, directories, links and files.
-The following commands perform that setup.
-
-#### Shell Env. SetUp ####
-
-**TODO**:
-
-#### Files, Directories and Links SetUp ####
-
-**TODO**:
-
-Compiling and Building
-----------------------
-
-**TODO**:
-
-Testing
--------
-
-**TODO**:
-
-Install
--------
-
-Installation can only be performed by the librarian who has proper permissions.
-This would be done on the EC/CMC and GC/Science networks.
-
-**TODO**:
-
-#### Post Install ####
-
-**TODO**
-
-  * update doc
-  * send emails
-
-
-Uninstall
----------
-
-Un-installation can only be performed by the librarian who has proper permissions.
-This would be done on the EC/CMC and GC/Science networks.
-
-**TODO**:
-
-Cleaning up
------------
-
-To remove all files created by the setup, compile and build process, use the `distclean` target.
-
-        make distclean
 
 Misc
 ====
