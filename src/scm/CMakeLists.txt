@@ -14,7 +14,6 @@ add_library(scmdyn STATIC ${F_FILES})
 target_link_libraries(scmdyn PRIVATE
    rpnphy
    rpnphy_cpl_stubs
-   rpnphy_chm_stubs
    modelutils
    modelutils_tmg_stubs
    modelutils_ov_ifort
@@ -27,7 +26,6 @@ target_link_libraries(mainscm
    scmdyn
    rpnphy
    rpnphy_cpl_stubs
-   rpnphy_chm_stubs
    modelutils
    modelutils_tmg_stubs
    modelutils_ov_ifort
@@ -47,7 +45,6 @@ add_executable(fst2ptxt main/mainfst2ptxt.F90)
 target_link_libraries(fst2ptxt
    scmdyn
    rpnphy
-   rpnphy_chm_stubs
    rpnphy_cpl_stubs
    modelutils
    modelutils_tmg_stubs
