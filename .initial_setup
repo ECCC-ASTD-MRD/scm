@@ -28,7 +28,7 @@ if [ -n "${SCM_STORAGE_DIR}" -a -n "${SCM_ARCH}" -a -n "${SCM_WORK}" ] ; then
 cat > ${PWD}/${SCM_WORK}/.eccc_setup <<EOF
 ici=\$PWD
 cd ${scm_DIR}
-. $SETUP_FILE
+. ${SETUP_FILE}
 cd \$ici
 EOF
     fi
