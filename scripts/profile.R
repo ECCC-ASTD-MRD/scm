@@ -118,8 +118,10 @@ for (fcst.sec in fcst.vec){
               }
           }
       } else {
-          diag.x[[expfld.this]]<-fld.values[length(fld.values)]
-          diag.y[[expfld.this]]<-pfld.values[length(fld.values)]
+          if (! nodiag){
+              diag.x[[expfld.this]]<-fld.values[length(fld.values)]
+              diag.y[[expfld.this]]<-pfld.values[length(fld.values)]
+          }
           fld.values<-fld.values[1:(length(fld.values)-1)]
           pfld.values<-pfld.values[1:(length(pfld.values)-1)]
       }

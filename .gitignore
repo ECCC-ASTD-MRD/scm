@@ -1,5 +1,6 @@
 *~
 *.pyc
+*.png
 __pycache__
 gem_dbase
 scm_dbase
