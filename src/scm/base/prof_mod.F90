@@ -89,6 +89,10 @@ module prof_mod
      integer :: buffer_id                                                       !unique key identifying field entry
   end type output_var
 
+  ! Module parameters
+  character(len=*), parameter :: ZADV_CENTERED='centered'                       !centered vertical advection key
+  character(len=*), parameter :: ZADV_UPSTREAM='upstream'                       !upstream vertical advection key
+
   ! Module variables
   integer, private :: p_nk                                                      !number of vertical levels for physics
   integer, private :: output_start                                              !step to start output
@@ -109,6 +113,7 @@ module prof_mod
   character(len=SHORT_CHAR), private :: stag                                    !vertical staggering
   character(len=LONG_CHAR), private :: path_inputs_s                            !path to input dir
   character(len=LONG_CHAR), private :: path_outputs_s                           !path to output dir
+  character(len=SHORT_CHAR), private :: zadv_type                               !type of vertical advection
   character(len=SHORT_CHAR), dimension(MAX_OUTPUTS), private :: output_list     !list of requested outputs
   logical, private :: dyn_forcings                                              !apply dynamics forcings
   logical, private :: vstag                                                     !run with vertical staggering (T/M levels)
@@ -285,7 +290,7 @@ contains
     namelist /scm_cfgs/ relax,grd_dx,grd_dy,output_start, &
          output_end,output_inc,output_list,prof_point,debug_L, &
          hyb,grd_rcoef,cstv_ptop_8,emulate,stag,dyn_forcings,  &
-         schm_tlift,allow_move,output_buffer_length
+         schm_tlift,allow_move,output_buffer_length,zadv_type
 
     ! Initializations
     relax = -1.
@@ -306,6 +311,7 @@ contains
     dyn_forcings = .true.
     schm_tlift = 0
     allow_move = .false.
+    zadv_type = ZADV_CENTERED
 
     ! Open and read from settings file
     sfile = trim(path_inputs_s)//'/model_settings.nml'
@@ -327,6 +333,11 @@ contains
     ! Check that a profile point is defined
     call handle_error_l(any(abs(prof_point-MISSING_POINT)>epsilon(MISSING_POINT)),'prof_nml', &
          'Profile point (prof_point) must be defined in '//trim(sfile))
+
+    ! Check that a valid vertical advection type has been chosen
+    call handle_error(clib_tolower(zadv_type),'prof_nml','Converting zadv_type to upper-case')    
+    call handle_error_l(any(zadv_type == (/ZADV_UPSTREAM,ZADV_CENTERED/)),'prof_nml', &
+         'Unknown value ('//trim(zadv_type)//') for zadv_type')
 
     ! Check that the vertical coordinate is defined
     call handle_error_l(any(hyb>0.),'prof_nml','Coordinate (hyb) must be defined in '//trim(sfile))
@@ -701,7 +712,7 @@ contains
 
     ! Compute pressure-coordinate vertical motion for prognostic equations
     nullify(ww)
-    istat = gmm_get(gmmk_pw_ww_plus_s,ww,meta)
+    istat = gmm_get(gmmk_pw_ww_plus_s,ww,meta)   
     call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_ww_plus_s))
     nk = size(ww,dim=3)
     call prof_w('pressure',ww)
@@ -727,7 +738,7 @@ contains
        istat = gmm_get(gmmk_bkg_t_s,bkg,meta)
        call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_bkg_t_s))
        if (.not.prof_is_valid(gmmk_bkg_t_s)) bkg = moins
-       plus = moins + my_dt * ( adv - ww * (prof_ddp(moins,pt) - (rgasd/cpd)*(moins/pt(:,:,1:nk))) + irelax * (bkg - moins) )
+       plus = moins + my_dt * ( adv - prof_zadv(ww,moins,pt) + ww*(rgasd/cpd)*(moins/pt(:,:,1:nk)) + irelax * (bkg - moins) )
     endif
 
     ! Update prognostic west wind
@@ -752,7 +763,7 @@ contains
        istat = gmm_get(gmmk_geo_v_s,vg,meta)
        call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_geo_v_s))
        if (.not.prof_is_valid(gmmk_geo_v_s)) vg = vv
-       plus = moins + my_dt * ( adv - wwm * prof_ddp(moins,pm) + fcor * (vv - vg) + irelax * (bkg - moins) )
+       plus = moins + my_dt * ( adv - prof_zadv(wwm,moins,pm) + fcor * (vv - vg) + irelax * (bkg - moins) )
     endif
 
     ! Update prognostic south wind
@@ -777,7 +788,7 @@ contains
        istat = gmm_get(gmmk_geo_u_s,ug,meta)
        call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_geo_u_s))
        if (.not.prof_is_valid(gmmk_geo_u_s)) ug = uu
-       plus = moins + my_dt * ( adv - wwm * prof_ddp(moins,pm) - fcor * (uu - ug) + irelax * (bkg - moins) )
+       plus = moins + my_dt * ( adv - prof_zadv(wwm,moins,pm) - fcor * (uu - ug) + irelax * (bkg - moins) )
     endif
 
     ! Update tracers
@@ -803,12 +814,16 @@ contains
           istat = gmm_get(gmmname,bkg,meta)
           call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
           if (.not.prof_is_valid(gmmname)) bkg = moins
-          plus = moins + my_dt * ( adv - ww * prof_ddp(moins,pt) + irelax * (bkg - moins) )
+          plus = moins + my_dt * ( adv - prof_zadv(ww,moins,pt) + irelax * (bkg - moins) )
        endif
     enddo
 
     ! Update heights and coordinate pressures
     call prof_update_GPW()
+
+    ! Garbage collection
+    deallocate(wwm,stat=istat)
+    call handle_error(istat,'prof_dyn_fwd','Deallocating vertical motion wwm')
 
   end subroutine prof_dyn_fwd
 
@@ -2239,7 +2254,7 @@ contains
 
     ! Input arguments
     real, dimension(:,:,:), intent(in) :: fld         !field to differentiate
-    real, dimension(:,:,:), intent(in) :: pres        !pressure
+    real, dimension(:,:,:), intent(in) :: pres        !pressure (Pa)
 
     ! Output arguments
     real, dimension(1,1,size(fld,dim=3)) :: der       !vertical derivative
@@ -2256,6 +2271,45 @@ contains
     enddo
     der(1,1,nk) = (fld(1,1,nk)-fld(1,1,nk-1)) / (pres(1,1,nk)-pres(1,1,nk-1))
   end function prof_ddp
+  
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  function prof_zadv(ww,fld,pres) result(zadv)
+    ! Compute vertical advection
+
+    implicit none
+
+    ! Input arguments
+    real, dimension(:,:,:), intent(in) :: ww          !vertical motion (Pa/s)
+    real, dimension(:,:,:), intent(in) :: fld         !field to differentiate
+    real, dimension(:,:,:), intent(in) :: pres        !pressure (Pa)
+
+    ! Output arguments
+    real, dimension(1,1,size(fld,dim=3)) :: zadv      !vertical advection
+
+    ! Local variables
+    integer :: k,nk
+    real :: der
+
+    ! Compute advection as specified by user
+    select case (zadv_type)
+    case (ZADV_CENTERED)
+       zadv = ww * prof_ddp(fld, pres)
+    case (ZADV_UPSTREAM)
+       nk = size(fld,dim=3)
+       do k=1,nk
+          if ((ww(1,1,k) > 0 .or. k==nk) .and. k/=1) then
+             ! Subsidence or lower boundary
+             der = (fld(1,1,k-1) - fld(1,1,k)) / (pres(1,1,k-1) - pres(1,1,k))
+          else 
+             ! Ascent or upper boundary
+             der = (fld(1,1,k) - fld(1,1,k+1)) / (pres(1,1,k) - pres(1,1,k+1))
+          endif
+          zadv(1,1,k) = ww(1,1,k) * der
+       enddo
+    case DEFAULT
+       call handle_error(-1, 'prof_zadv', 'Unknown vertcial advection type '//trim(zadv_type)//' requested')
+    end select
+  end function prof_zadv
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine prof_update_GPW()
