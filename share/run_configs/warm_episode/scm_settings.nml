@@ -63,7 +63,7 @@
  LMETOX           = .true.     , 
 
  LONGMEL          = 'boujo'    ,
- FLUVERT          = 'clef'     ,
+ FLUVERT          = 'ysu'     ,
 
  PBL_SHAL         = 'conres'   ,
  STCOND           = 'consun'   ,

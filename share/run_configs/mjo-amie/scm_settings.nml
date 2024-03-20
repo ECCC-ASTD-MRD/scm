@@ -96,7 +96,7 @@ output_list = 'TG','TJ','TM','RH','UD','VD','ED','DQ',
  LMETOX           = .true.     , 
 
  LONGMEL          = 'boujo'    ,
- FLUVERT          = 'clef'     ,
+ FLUVERT          = 'ysu'     ,
 
  PBL_SHAL         = 'conres'   ,
  STCOND           = 'consun'   ,
