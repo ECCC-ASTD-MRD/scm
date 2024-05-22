@@ -3,26 +3,26 @@
 # For internal use at ECCC
 
 # Source this file to:
-# - Load profile, Intel compiler. and code-tools for Intel
+# - Load profile, Intel compiler, and code-tools for Intel
 # - Load libraries
 # - Load a script for common setup to all compilers
 
 DOMAIN=`hostname -d`
 
 if [[ ${DOMAIN} = "collab.science.gc.ca" ]]; then
-    . r.load.dot rpn/code-tools/ENV/cdt-1.6.8/SCIENCE/gpscc3/inteloneapi-2022.1.2
+    . r.load.dot rpn/code-tools/ENV/cdt-1.6.9SCIENCE/gpscc3/inteloneapi-2022.1.2
 elif  [[ -z "${DOMAIN}" || ${DOMAIN} = "science.gc.ca" ]]; then
-    . r.load.dot rpn/code-tools/ENV/cdt-1.6.8/SCIENCE/inteloneapi-2022.1.2
+    . r.load.dot rpn/code-tools/ENV/cdt-1.6.9/SCIENCE/inteloneapi-2022.1.2
 else
-    . r.load.dot rpn/code-tools/ENV/cdt-1.6.8/ECCC/inteloneapi-2022.1.2
+    . r.load.dot rpn/code-tools/ENV/cdt-1.6.9/ECCC/inteloneapi-2022.1.2
 fi
 
 # Load netcdf
 . r.load.dot /fs/ssm/main/opt/hdf5-netcdf4/serial/static/inteloneapi-2022.1.2/02
 
 # Load latest version of RPN-SI libraries and utilities
-. r.load.dot rpn/libs/20231219
-. r.load.dot rpn/utils/20231219
+. r.load.dot rpn/libs/20240513
+. r.load.dot rpn/utils/20240513
 
 # We need a more recent version of cmake than the one available by default
 . ssmuse-sh -d main/opt/cmake/cmake-3.21.1
