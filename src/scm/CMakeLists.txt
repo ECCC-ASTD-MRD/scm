@@ -13,7 +13,6 @@ set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/modules )
 add_library(scmdyn STATIC ${F_FILES})
 target_link_libraries(scmdyn PRIVATE
    rpnphy
-   rpnphy_cpl_stubs
    modelutils
    modelutils_tmg_stubs
    modelutils_ov_ifort
@@ -25,7 +24,6 @@ add_executable(mainscm main/mainscm.F90)
 target_link_libraries(mainscm
    scmdyn
    rpnphy
-   rpnphy_cpl_stubs
    modelutils
    modelutils_tmg_stubs
    modelutils_ov_ifort
@@ -45,7 +43,6 @@ add_executable(fst2ptxt main/mainfst2ptxt.F90)
 target_link_libraries(fst2ptxt
    scmdyn
    rpnphy
-   rpnphy_cpl_stubs
    modelutils
    modelutils_tmg_stubs
    modelutils_ov_ifort
