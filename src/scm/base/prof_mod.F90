@@ -1848,6 +1848,7 @@ contains
     use phy_itf, only: phymeta,phy_get,phy_getmeta
     use vGrid_Descriptors, only: vgd_get,vgd_levels,vgd_write,VGD_OK
     use step_mod, only: step_get,STEP_OK
+    use wb_itf_mod, only: wb_put, WB_REWRITE_MANY, WB_MAXSTRINGLENGTH
 
     implicit none
 
@@ -1864,7 +1865,7 @@ contains
     end type outlist
 
     ! Local variables
-    integer :: i,j,output_list_len,ngmm,nphy,nbase,istat,buffer_id
+    integer :: i,j,output_list_len,ngmm,nphy,nbase,istat,buffer_id,strlen
     character(len=LONG_CHAR) :: oname,prefix,prefix_coord,varname,varname_mangled
     logical :: found,pre_init
     logical, save :: initialized=.false.
@@ -1956,6 +1957,10 @@ contains
     out_gmm = out_gmm_all(1:size(out_gmm))
     allocate(out_phy(nphy))
     out_phy = out_phy_all(1:size(out_phy))
+    strlen = WB_MAXSTRINGLENGTH
+    if (size(out_phy) > 0) strlen = min(len(out_phy(1)%name), WB_MAXSTRINGLENGTH)
+    istat = wb_put('itf_phy/PHYSTEPOUT_N', size(out_phy), WB_REWRITE_MANY)
+    istat = wb_put('itf_phy/PHYSTEPOUT_V', out_phy(:)%name(1:strlen), WB_REWRITE_MANY)
 
     ! Establish output buffer
     allocate(output_buffer(p_nk,size(out_gmm)+size(out_phy),output_buffer_length),stat=istat)
