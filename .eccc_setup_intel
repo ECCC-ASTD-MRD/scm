@@ -11,7 +11,7 @@ export COMPILER_SUITE=intel
 export COMPILER_VERSION=2022.1.2
 
 # Load code-tools 
-. r.load.dot rpn/code-tools/20240514/env/inteloneapi-${COMPILER_VERSION}
+. r.load.dot rpn/code-tools/20240719/env/inteloneapi-${COMPILER_VERSION}
 
 # Load netcdf
 . r.load.dot /fs/ssm/main/opt/hdf5-netcdf4/serial/static/inteloneapi-2022.1.2/02
@@ -19,9 +19,6 @@ export COMPILER_VERSION=2022.1.2
 # Load latest version of RPN-SI libraries and utilities
 . r.load.dot rpn/libs/20240703-alpha
 . r.load.dot rpn/utils/20240703-alpha
-
-# We need a more recent version of cmake than the one available by default
-. ssmuse-sh -d main/opt/cmake/cmake-3.21.1
 
 # Check and tell if maestro is loaded
 if [ -z "${MAESTRO_VERSION}" ]; then
