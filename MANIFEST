@@ -14,7 +14,7 @@ rpnphy = 6.3.0-a10
 # Dependencies
 #    =,<,<=,>,>= : Version rules
 #    ~           : Optional
-rmn  >= 20.1.0-a6
-tdpack >= 1.6.3.4
-vgrid >= 6.9.3.4
-rpncomm >= 4.6.3.4
+rmn  >= 20.1.0-a8
+tdpack >= 1.6.3.6
+vgrid >= 6.9.6
+rpncomm >= 4.6.4

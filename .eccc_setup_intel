@@ -17,8 +17,8 @@ export COMPILER_VERSION=2022.1.2
 . r.load.dot /fs/ssm/main/opt/hdf5-netcdf4/serial/static/inteloneapi-2022.1.2/02
 
 # Load latest version of RPN-SI libraries and utilities
-. r.load.dot rpn/libs/20240703-alpha
-. r.load.dot rpn/utils/20240703-alpha
+. r.load.dot rpn/libs/20241105-alpha
+. r.load.dot rpn/utils/20241105-alpha
 
 # Check and tell if maestro is loaded
 if [ -z "${MAESTRO_VERSION}" ]; then
