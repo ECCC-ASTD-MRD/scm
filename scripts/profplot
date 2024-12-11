@@ -5,6 +5,7 @@ import subprocess
 import glob,re
 import sys,os
 import ConfigParser
+import tempfile
 
 def default_yaxis(config,coord):
     """Set default values for the specified coordinate"""
@@ -145,15 +146,15 @@ if __name__ == "__main__":
         ytop = ytop_default
 
     # Call R script for plotting
+    ipcfile = tempfile.NamedTemporaryFile().name
     script_path = os.path.dirname(os.path.abspath(sys.argv[0]))
     command = 'R'+' --no-save --no-restore --args '+files+' '+','.join(["%s" % e for e in fcstlist])+' '+ \
               options.levtype+' '+options.coord+' '+ytop+' '+ybot+' '+xlow+' '+xhigh+' '+options.legend+' '+ \
               options.device+' '+str(options.zero)+' '+str(options.nodiag)+' '+str(options.collist)+' '+ \
-              str(options.points)+' '+' '.join(args)+' <'+os.path.join(script_path,'profile.R')
+              str(options.points)+' '+ipcfile+' '+' '.join(args)+' <'+os.path.join(script_path,'profile.R')
     p = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     error_message = p.stderr.read().rstrip('\n')
     output_message = p.stdout.read().rstrip('\n')
-    ipcfile = '.prof_outname'
     if error_message:
         sys.stderr.write(error_message)
     else:

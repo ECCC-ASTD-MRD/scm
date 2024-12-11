@@ -14,7 +14,8 @@ zero<-as.logical(args[15])
 nodiag<-as.logical(args[16])
 col.list.user<-strsplit(args[17],',')[[1]]
 pch.user<-as.numeric(args[18])
-paths<-args[19:length(args)]
+ipcfile<-args[19]
+paths<-args[20:length(args)]
 
 # Basic configuration
 lwd<-3
@@ -33,7 +34,7 @@ dfile<-paste('DIAG',levtype,'_',ext,sep='')
 date.init<-strptime(strsplit(ext,'.txt',fixed=TRUE)[[1]][1],format="%Y%m%d.%H%M%S")
 date.valid<-date.init+fcst.vec[1]
 oname<-paste(fld.name.default,'_',sub(' ','T',format(date.valid,format='%Y%m%d.%H%M%S')),'.',type,sep='')
-write(oname,file='.prof_outname')
+write(oname,file=ipcfile)
 zero.plot<-NA
 if (zero){zero.plot<-0}
 if (col.list.user[1] == 'R_colours'){

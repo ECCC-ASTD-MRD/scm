@@ -442,7 +442,8 @@ fcst.list<-args[6]
 type<-args[7]
 col.list.user<-strsplit(args[8],',')[[1]]
 pch.user<-as.numeric(args[9])
-paths<-args[10:length(args)]
+ipcfile<-args[10]
+paths<-args[11:length(args)]
 
 # Common setup
 fcst.vec<-as.numeric(unlist(strsplit(fcst.list,',')))
@@ -453,7 +454,7 @@ pfile.m<-paste('PRESM_',ext,sep='')
 date.init<-strptime(strsplit(ext,'.txt',fixed=TRUE)[[1]][1],format="%Y%m%d.%H%M%S")
 date.valid<-date.init+fcst.vec[1]
 oname<-paste('tephi_',sub(' ','T',format(date.valid,format='%Y%m%d.%H%M%S')),'.',type,sep='')
-write(oname,file='.tephi_outname')
+write(oname,file=ipcfile)
 if (col.list.user[1] == 'R_colours'){
   col.list<-seq(1,fld.cnt)
 } else {

@@ -8,6 +8,7 @@ import re
 import shutil
 import ConfigParser
 import urlparse
+import tempfile
 
 if __name__ == "__main__":
 
@@ -104,15 +105,15 @@ if __name__ == "__main__":
         yhigh = yhigh_default
 
     # Call R script for plotting
+    ipcfile = tempfile.NamedTemporaryFile().name
     script_path = os.path.dirname(os.path.abspath(sys.argv[0]))    
     command = 'R'+' --no-save --no-restore --args '+files+' '+','.join(levlist)+ \
               ' '+options.legend+' '+options.device+' '+str(options.collist)+' '+str(options.points)+ \
-              ' '+' '.join([str(f) for f in fcst])+' '+ylow+' '+yhigh+' '+ \
+              ' '+' '.join([str(f) for f in fcst])+' '+ylow+' '+yhigh+' '+ipcfile+' '+ \
               ' '.join(pathlist)+' <'+os.path.join(script_path,'ts.R')    
     p = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     error_message = p.stderr.read().rstrip('\n')
     output_message = p.stdout.read().rstrip('\n')
-    ipcfile = '.series_outname'    
     if error_message:
         sys.stderr.write(error_message)
     else:

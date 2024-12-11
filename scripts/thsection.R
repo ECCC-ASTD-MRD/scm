@@ -14,7 +14,8 @@ colmap<-strsplit(args[15],':')[[1]]
 time.units<-args[16]
 interp<-args[17]
 col.rev<-as.logical(args[18])
-paths<-args[19:length(args)]
+ipcfile<-args[19]
+paths<-args[20:length(args)]
 
 # Basic configuration
 lwd<-3
@@ -32,7 +33,7 @@ dfile<-paste('DIAG',levtype,'_',ext,sep='')
 date.init<-strptime(strsplit(ext,'.txt',fixed=TRUE)[[1]][1],format="%Y%m%d.%H%M%S")
 date.start<-date.init + fcst.desc[1]
 oname<-paste(fld.name.default,'.',type,sep='')
-write(oname,file='.sec_outname')
+write(oname,file=ipcfile)
 coord.mult<-1.
 coord.unit<-''
 if (coord=='PRES'){

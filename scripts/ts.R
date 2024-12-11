@@ -10,7 +10,8 @@ xlow<-as.numeric(args[7])
 xhigh<-as.numeric(args[8])
 ylow<-as.numeric(args[9])
 yhigh<-as.numeric(args[10])
-paths<-args[11:length(args)]
+ipcfile<-args[11]
+paths<-args[12:length(args)]
 
 # Basic configuration
 lwd<-3
@@ -24,7 +25,7 @@ fld.cnt<-length(paths)*length(files)
 ext=strsplit(files[1],'_')[[1]][length(strsplit(files[1],'_')[[1]])]
 date.init<-strptime(strsplit(ext,'.txt',fixed=TRUE)[[1]][1],format="%Y%m%d.%H%M%S")
 oname<-paste(fld.name.default,'_',lev.list[1],'.',type,sep='')
-write(oname,file='.series_outname')
+write(oname,file=ipcfile)
 if (col.list.user[1] == 'R_colours'){
   col.list<-seq(1,fld.cnt)
 } else {
