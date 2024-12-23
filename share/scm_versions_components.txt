@@ -65,4 +65,6 @@ scm=2.3.0-a8;scmdyn=2.3.0-a8;rpnphy=6.3.0-a8;modelutils=1.8.0-a7
 scm=2.3.0-a9;scmdyn=2.3.0-a9;rpnphy=6.3.0-a9;modelutils=1.8.0-a9
 scm=2.3.0-a10;scmdyn=2.3.0-a10;rpnphy=6.3.0-a10;modelutils=1.8.0-a10
 scm=2.3.0-a11;scmdyn=2.3.0-a10;rpnphy=6.3.0-a10;modelutils=1.8.0-a10
+scm=2.3.0-a12;scmdyn=2.3.0-a10;rpnphy=6.3.0-a12;modelutils=1.8.0-a10
+
 
