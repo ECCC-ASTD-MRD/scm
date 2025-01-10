@@ -43,8 +43,7 @@ if __name__ == "__main__":
     config.read([os.path.join(os.getenv('scm_DIR'),'share','default_config'),os.path.join(os.getenv('HOME'),'.scmrc')])
     if not config.has_section('thplot'): config.add_section('thplot')
     show_default = config.get('thplot','display_application')
-    colmap_default = re.split(':', config.get('thplot','colourmap'))
-
+    colmap_default = re.split(':', config.get('thplot','colourmap')+':')
 
     # Command line argument parsing
     usage = "Usage: %prog [options] PATHS"
@@ -145,7 +144,7 @@ if __name__ == "__main__":
     colmap = colmap_default
     colmap_user = re.split(':',options.colourmap)
     for i, v in enumerate(colmap_user):
-        if v: colmap[i] = v 
+        if v: colmap[i] = v
 
     # Call R script for plotting
     ipcfile = tempfile.NamedTemporaryFile().name

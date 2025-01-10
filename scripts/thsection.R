@@ -208,12 +208,18 @@ if (any(col.split[1] == colours())){
             col=col.split[1], lwd=lwd, xaxt='n', xaxs='i')
     axis(1, xaxis.at, labels=as.vector(xaxis.lab))
     all.contours(fld.x, fld.y, fld.z, col=col.split)
-    all.legend(col=col.split)
+    all.legend(col=col.split) 
 } else {
     # Colour-filled plot
     source(paste(Sys.getenv('SCM_SCRIPTS_LIBPATH'),'R','plotting.R',sep='/'))
-    require(colorspace, quietly=TRUE)
-    col.pal <- get(col.palette.func)(length(lev), palette=col.palette.name)
+    col.pal <- tryCatch({
+        # Colour-filled plot from colorspace package
+        require(colorspace, quietly=TRUE)
+        get(col.palette.func)(length(lev), palette=col.palette.name)
+    }, error = function(cond){
+        # Use basic grDevices colours
+        return(get(col.palette.func)(length(lev)))
+    })
     if (col.rev){col.pal <- rev(col.pal)}
     scm.filled.contour(fld.x[[exp[1]]], fld.y[[exp[1]]], fld.z[[exp[1]]], ylim=yrange,
                        main=title, xlab=xlab, ylab=coord.name, zlim=zrange, levels=lev,

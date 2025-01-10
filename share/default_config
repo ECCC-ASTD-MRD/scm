@@ -23,8 +23,8 @@ yaxis_bottom_pressure=Inf
 # Default value of the lowest pressure plotted in the time-height section (i.e.
 # pressure at the top of the plot axis)
 yaxis_top_pressure=100
-# Default colourmap to use for plotting
-colourmap=sequential_hcl:Viridis
+# Default colourmap to use for plotting (e.g. sequential_hcl:Viridis)
+colourmap=cm.colors
 
 [scmdiag]
 # Default comma-separated list of derived fields to compute from an SCM integration
