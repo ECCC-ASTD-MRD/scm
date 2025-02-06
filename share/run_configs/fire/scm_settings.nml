@@ -1,0 +1,132 @@
+# Settings for a test run using GABLS-3 data
+
+ &step
+ step_runstrt_s = '19870714.080000',
+ step_dt_8 = 450.,
+ fcst_end_s = '72h',
+ fcst_nesdt_s = '72h',
+ /
+
+ &scm_cfgs
+
+ prof_point = 33.3, 240.5
+
+ grd_dx = 0.135,
+ grd_dy = 0.135,
+
+ debug_L = .false.,
+
+  hyb = 1.996677e-01, 2.127722e-01,
+        2.266823e-01, 2.414443e-01, 2.571042e-01, 2.737070e-01, 2.912963e-01,
+        3.099130e-01, 3.295946e-01, 3.503738e-01, 3.722777e-01, 3.953262e-01,
+        4.195309e-01, 4.448380e-01, 4.710684e-01, 4.980296e-01, 5.255275e-01,
+        5.533735e-01, 5.813907e-01, 6.094182e-01, 6.373139e-01, 6.649557e-01,
+        6.922417e-01, 7.190894e-01, 7.453858e-01, 7.709042e-01, 7.954379e-01,
+        8.188151e-01, 8.409014e-01, 8.616011e-01, 8.808559e-01, 8.986422e-01,
+        9.149664e-01, 9.300043e-01, 9.439255e-01, 9.566650e-01, 9.680431e-01,
+        9.778685e-01, 9.860255e-01, 9.925241e-01, 9.975018e-01, 
+
+  grd_rcoef = 3., 15.
+
+ output_list = 'PRE_WW','TADV','TPHY','QADV','QPHY',
+ 	'T8','2T','H8','UH','U8','UP','V8','VP','TJ','DQ','UD','VD','PRE_WW','TADV','TPHY',
+	'FC','FV','FI','FS','SI','FB','ECC','NT','TG','ECCL','SIGS','FN',
+	'TI','T2','BUOY','EN','RIG','RIF','QTBL','PFN','FE','NC','BUOC','KM','KT',
+	'QCON','TCON','Q1','SIGP','HUCP','ZN','ZD','TF','Q8','DQCO','DTCO','SHR2','DFEN','DSEN',
+	'EM','EPL','TFTT','TFHU','THV','ZNU','ZND','TFTL','QBLM','QBLP','CEP','CQP','BUEN','SHEN',
+	'CQ','RHC','RT','PR','QC8','SQCE','STE','SQE','Q9','QWV','QWVP','QWVM','LDIF',
+	'QD','QE','ZNT','PRI','ZNP','FXPD','NS','NSP','CCRA','CQRA','CTRA','CCCB','CQCB','CTCB',
+        'CCCA','CQCA','CTCA','SSIG','H','ICR','IIR'
+
+ /
+
+ &surface_cfgs
+ SCHMSOL   = 'ISBA'
+ ICELAC    = .true., ICEMELT    = .true.
+ LIMSNODP  = .true., SALTY_QSAT = .true.
+ IMPFLX    = .true.,
+ Z0MTYPE   = 'beljaars'
+ Z0TTYPE   = 'deacu12'
+ DIUSST    = 'nil'
+ diusst_warmlayer_lakes = .false.
+ adj_i0_snow= .false.
+ sl_lmin_soil = 20.
+ sl_func_stab='beljaars91'
+ sl_z0ref = .true.
+ snow_emiss='.97'
+ ice_emiss='.97'
+ water_emiss='1.0'
+ isba_zr_freeze = .true.
+ isba_melting_fix = .true.
+ sl_Lmin_glacier = 5.
+ sl_Lmin_seaice = 10.
+ sl_Lmin_water = 10.
+ z0seaice  = 5.4e-4
+ leadfrac    = 0.0
+/
+
+ &physics_cfgs
+ RADIA            = 'cccmarad2' , KNTRAD_S = '1h'
+ KNTRADUV_S = '1h',
+ radghg_L         = .true.      ,
+ rad_linoz_l      = .true.  ,
+ linoz_chm = 'ozone'    ,
+ rad_esfc         = .true.
+ STRATOS  = .true.
+ INTOZOT          = .true.     ,
+
+ GWDRAG           = 'sgo16'    , NON_ORO  = .true.
+ sgo_phic         = 0.15       ,
+ sgo_windfac      = 2., 0.5    ,
+ hines_flux_filter= 5          , LMETOX   = .true.
+
+ LONGMEL          = 'turboujo'
+ FLUVERT          = 'moistke'
+ PBL_RICRIT       = 0.15,2.
+ FNN_MASK         = .true.  ,
+ pbl_dissheat     = 'LOCAL_K'
+ pbl_mlturb_diss  = .true.
+ pbl_tkediff2dt   = .true.
+ pbl_diss         = 'lim50'
+ pbl_zntau        = 900.
+ pbl_cmu_timeavg  = .true.
+ pbl_ae           = 0.1
+ advectke         = .true.
+
+ pbl_shal         = 'nil'   , STCOND= 'consun'
+ INILWC           = .true.
+
+ cond_conserve    = 'tend'
+ cond_evap        = 4.e-4
+
+/
+
+ &convection_cfgs
+ DEEP       = 'nil'      , SHAL     = 'bechtold'
+ KFCRAD     = 1500.      , KFCDEPTH = 3000.
+ KFCRADW    = 1250.
+ KFCTRIG4   = 0.,0.,0.17,0.17
+ kfctrigw   = 0.5, 1., 0.07, 0.0
+ cmt_type= ECMWF_PH2
+ kfcdpdd = 6000.
+
+ deep_timeconv='BECHTOLD09'
+ deep_timerefresh='1p'
+ KFCTAUCAPE = 15000.,1000.,-1,-1
+
+ bkf_entrains = 'siebesma03'
+ bkf_detrains = 'cuijpers95'
+ bkf_closures = 'equilibrium'
+ bkf_lshalm   = .true.
+ bkf_evaps    = .false.
+
+ mid = 'kf'
+ mid_conserve = 'tend'
+ mid_maxcape = 250. 
+ mid_emfmod = 'latmod1'
+
+ kfctrigtau = 3600.,
+ deep_cloudobj = .true.,
+ deep_codecay = 3600.
+
+/
