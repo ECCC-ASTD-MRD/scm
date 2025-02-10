@@ -9,7 +9,7 @@ DOC        : https://wiki.cmc.ec.gc.ca/wiki/SCM
 
 # Components
 modelutils = 1.8.0-a10
-rpnphy = 6.3.0-a12
+rpnphy = 6.3.0-a13
 
 # Dependencies
 #    =,<,<=,>,>= : Version rules
