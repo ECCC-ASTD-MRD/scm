@@ -27,22 +27,6 @@ cmake-debug:
 cmake-debug-extra:
 	( cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake -DCMAKE_BUILD_TYPE=Debug -DEXTRA_CHECKS=ON ${scm_DIR} )
 
-# Use installed RPN libraries and add MACH package
-cmake-mach:
-	( cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake -DWITH_MACH=TRUE ${scm_DIR} )
-
-# Using installed RPN libraries (rmn, vgrid, rpncomm, tdpack) and static Intel libraries
-cmake-mach-static:
-	( cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake -DWITH_MACH=TRUE -DSTATIC_INTEL=ON ${scm_DIR} )
-
-# Use installed RPN libraries and add MACH package with debug
-cmake-mach-debug:
-	( cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_MACH=TRUE ${scm_DIR} )
-
-# Compiling everything with MACH package
-cmake-all-mach:
-	( export WITH_SYSTEM_RPN=FALSE && cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake -DWITH_MACH=TRUE ${scm_DIR} )
-
 .PHONY: build
 build:
 	( cd build-${SCM_ARCH} && cd `/bin/pwd` && $(MAKE) )
