@@ -11,7 +11,7 @@ export COMPILER_SUITE=intel
 export COMPILER_VERSION=2022.1.2
 
 # Load code-tools 
-. r.load.dot rpn/code-tools/20240719/env/inteloneapi-${COMPILER_VERSION}
+. r.load.dot rpn/code-tools/20250521/env/inteloneapi-${COMPILER_VERSION}
 
 # Load netcdf
 . r.load.dot /fs/ssm/main/opt/hdf5-netcdf4/serial/static/inteloneapi-2022.1.2/02
