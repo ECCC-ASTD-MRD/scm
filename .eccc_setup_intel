@@ -3,22 +3,35 @@
 # For internal use at ECCC
 
 # Source this file to:
-# - Load profile, Intel compiler, and code-tools for Intel
-# - Load libraries
+# - Load profile, Intel compiler and code-tools for Intel, depending on compiler version
+# - Load RPN-SI libraries and utilities
 # - Load a script for common setup to all compilers
 
-export COMPILER_SUITE=intel
-export COMPILER_VERSION=2022.1.2
+# Check name of the script called, to export corresponding Intel compiler version
+INTEL_SCRIPT_NAME=$(echo $(basename ${BASH_SOURCE[0]}))
+
+case ${INTEL_SCRIPT_NAME} in
+    .eccc_setup_intel)
+        export COMPILER_VERSION=2022.1.2
+        ;;
+    .eccc_setup_intel_2025.1.0)
+        export COMPILER_VERSION=2025.1.0
+        ;;
+esac
 
 # Load code-tools 
 . r.load.dot rpn/code-tools/20250925/env/inteloneapi-${COMPILER_VERSION}
 
-# Load netcdf
-. r.load.dot /fs/ssm/main/opt/hdf5-netcdf4/serial/static/inteloneapi-2022.1.2/02
-
 # Load latest version of RPN-SI libraries and utilities
 . r.load.dot rpn/libs/20251009-beta
 . r.load.dot rpn/utils/20251009-beta
+
+# Load netcdf, depending on Intel compiler version
+if [[ ${COMPILER_VERSION} = "2022.1.2" ]]; then
+    . r.load.dot /fs/ssm/main/opt/hdf5-netcdf4/serial/static/inteloneapi-2022.1.2/02
+elif [[ ${COMPILER_VERSION} = "2025.1.0" ]]; then
+    . r.load.dot /fs/ssm/main/opt/hdf5-netcdf4/parallel/intelmpi-2025.1.0/alllib/inteloneapi-2025.1.0/01
+fi
 
 # Check and tell if maestro is loaded
 if [ -z "${MAESTRO_VERSION}" ]; then
@@ -28,6 +41,8 @@ else
     echo "Maestro ${MAESTRO_VERSION} scripts will be used"
 fi
 
+# Call common setup file
+export COMPILER_SUITE=intel
 . ./.common_setup ${COMPILER_SUITE}
 
 # Set WITH_SYSTEM_RPN variable with default value TRUE for ECCC users
