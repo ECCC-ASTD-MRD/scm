@@ -11,6 +11,10 @@ MAKEFLAGS += --no-print-directory
 cmake:
 	( cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake ${scm_DIR} )
 
+# Using installed RPN libraries (rmn, vgrid, rpncomm, tdpack)
+cmake-strict:
+	( cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake -DSTRICT=TRUE ${scm_DIR} )
+
 # Using installed RPN libraries (rmn, vgrid, rpncomm, tdpack) and static Intel libraries
 cmake-static:
 	( cd build-${SCM_ARCH} && cd `/bin/pwd` && cmake -DSTATIC_INTEL=ON ${scm_DIR} )
