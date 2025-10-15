@@ -31,7 +31,7 @@ else
         fi
         export SCM_STORAGE_DIR
         export scm_DIR=$PWD
-        export ATM_MODEL_VERSION=`cat MANIFEST | sed -n '/VERSION/s/.*: //p'`
+        export ATM_MODEL_VERSION=`cat MANIFEST | sed -n '/^VERSION/s/.*: //p'`
         export SCM_MODEL_DFILES=${scm_DIR}/scm_dbase
         export ATM_MODEL_DFILES=${scm_DIR}/gem_dbase
         export CMCCONST=${ATM_MODEL_DFILES}/datafiles/constants
