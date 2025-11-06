@@ -25,6 +25,9 @@ module prof_mod
   use clib_itf_mod
   use wb_itf_mod
   use vGrid_Descriptors, only: vgrid_descriptor
+  use gmmx_name_mod, only: gmmx_name_parts
+  use samegrid_mod, only: samegrid2
+  use mod_handle_error, only: handle_error1, handle_error1_l
   implicit none
 
   private
@@ -242,21 +245,21 @@ contains
     ! Identify task directories
     envvar = 'TASK_INPUT'
     err = clib_getenv(trim(envvar),path_inputs_s)
-    call handle_error(err,'prof_base_dir_env','Environment variable '//trim(envvar)//' not defined')
+    call handle_error1(err,'prof_base_dir_env','Environment variable '//trim(envvar)//' not defined')
     envvar = 'TASK_WORK'
     err = clib_getenv(trim(envvar),path_outputs_s)
-    call handle_error(err,'prof_base_dir_env','Environment variable '//trim(envvar)//' not defined')
+    call handle_error1(err,'prof_base_dir_env','Environment variable '//trim(envvar)//' not defined')
     path_outputs_s = trim(path_outputs_s)//'/spool'
     err = clib_mkdir(trim(path_outputs_s))
-    call handle_error(err,'prof_base_dir_env','Unable to create '//trim(path_outputs_s))
+    call handle_error1(err,'prof_base_dir_env','Unable to create '//trim(path_outputs_s))
     call prof_output_prefix(o_subdir_data,o_subdir_coord)
     err = clib_mkdir(trim(o_subdir_data))
-    call handle_error(err,'prof_base_dir_env','Unable to create '//trim(o_subdir_data))
+    call handle_error1(err,'prof_base_dir_env','Unable to create '//trim(o_subdir_data))
     err = clib_mkdir(trim(o_subdir_coord))
-    call handle_error(err,'prof_base_dir_env','Unable to create '//trim(o_subdir_coord))
+    call handle_error1(err,'prof_base_dir_env','Unable to create '//trim(o_subdir_coord))
 
     ! Establish writing master for stdout of components
-    call handle_error(wb_put('model/outout/pe_master',0),'prof_base_dir_env','Adding PE master information to the whiteboard')
+    call handle_error1(wb_put('model/outout/pe_master',0),'prof_base_dir_env','Adding PE master information to the whiteboard')
 
   end subroutine prof_base_dir_env
 
@@ -317,30 +320,30 @@ contains
     sfile = trim(path_inputs_s)//'/model_settings.nml'
     iun = 0
     ier = fnom(iun,trim(sfile),'SEQ+OLD',0)
-    call handle_error(ier,'prof_nml','Opening settings file '//trim(sfile))
+    call handle_error1(ier,'prof_nml','Opening settings file '//trim(sfile))
     rewind(iun)
     read(iun,nml=scm_cfgs,err=100)
     ier = fclos(iun)
-    call handle_error(ier,'prof_nml','Closing settings file '//trim(sfile))
+    call handle_error1(ier,'prof_nml','Closing settings file '//trim(sfile))
 
     ! Read from the step namelist to fill package requirements
-    call handle_error_l(step_init(sfile)==STEP_OK,'prof_nml','Reading step namelist from '//trim(sfile))
-    call handle_error_l(step_get('step_runstrt_s',start_date)==STEP_OK,'prof_nml','Retrieving step_runstr_s from step package')
-    call handle_error_l(step_get('step_total',step_total)==STEP_OK,'prof_nml','Retrieving step_total from step package')
-    call handle_error_l(step_get('step_dt_8',cstv_dt_8)==STEP_OK,'prof_nml','Retrieving step_dt_8 from step package')
-    call handle_error_l(step_get('step_nesdt',nesdt)==STEP_OK,'prof_nml','Retrieving step_nesdt from step package')
+    call handle_error1_l(step_init(sfile)==STEP_OK,'prof_nml','Reading step namelist from '//trim(sfile))
+    call handle_error1_l(step_get('step_runstrt_s',start_date)==STEP_OK,'prof_nml','Retrieving step_runstr_s from step package')
+    call handle_error1_l(step_get('step_total',step_total)==STEP_OK,'prof_nml','Retrieving step_total from step package')
+    call handle_error1_l(step_get('step_dt_8',cstv_dt_8)==STEP_OK,'prof_nml','Retrieving step_dt_8 from step package')
+    call handle_error1_l(step_get('step_nesdt',nesdt)==STEP_OK,'prof_nml','Retrieving step_nesdt from step package')
 
     ! Check that a profile point is defined
-    call handle_error_l(any(abs(prof_point-MISSING_POINT)>epsilon(MISSING_POINT)),'prof_nml', &
+    call handle_error1_l(any(abs(prof_point-MISSING_POINT)>epsilon(MISSING_POINT)),'prof_nml', &
          'Profile point (prof_point) must be defined in '//trim(sfile))
 
     ! Check that a valid vertical advection type has been chosen
-    call handle_error(clib_tolower(zadv_type),'prof_nml','Converting zadv_type to upper-case')    
-    call handle_error_l(any(zadv_type == (/ZADV_UPSTREAM,ZADV_CENTERED/)),'prof_nml', &
+    call handle_error1(clib_tolower(zadv_type),'prof_nml','Converting zadv_type to upper-case')    
+    call handle_error1_l(any(zadv_type == (/ZADV_UPSTREAM,ZADV_CENTERED/)),'prof_nml', &
          'Unknown value ('//trim(zadv_type)//') for zadv_type')
 
     ! Check that the vertical coordinate is defined
-    call handle_error_l(any(hyb>0.),'prof_nml','Coordinate (hyb) must be defined in '//trim(sfile))
+    call handle_error1_l(any(hyb>0.),'prof_nml','Coordinate (hyb) must be defined in '//trim(sfile))
     p_nk = 1
     do while (hyb(p_nk) > 0.)
        p_nk = p_nk+1
@@ -365,25 +368,25 @@ contains
           coord_ver = 5
        case (1)
           coord_ver = 3
-          call handle_error(-1,'prof_nml','Schm_Tlift is not supported in this version of the SCM')
+          call handle_error1(-1,'prof_nml','Schm_Tlift is not supported in this version of the SCM')
        case DEFAULT
-          call handle_error(-1,'prof_nml','Invalid entry for Schm_Tlift.  See documentation for valid T-level lifting options')
+          call handle_error1(-1,'prof_nml','Invalid entry for Schm_Tlift.  See documentation for valid T-level lifting options')
        end select
        ier = vgd_new(vcoord,kind=5,version=coord_ver,hyb=hyb(1:p_nk-1),rcoef1=grd_rcoef(1),rcoef2=grd_rcoef(2), &
             pref_8=CSTV_PREF_8,ptop_out_8=cstv_ptop_8,dhm=0.,dht=0.)
     case DEFAULT
-       call handle_error(-1,'prof_nml','Unknown staggering '//trim(stag)//' requested.  See documentation for valid staggering options')
+       call handle_error1(-1,'prof_nml','Unknown staggering '//trim(stag)//' requested.  See documentation for valid staggering options')
     end select
-    call handle_error_l(ier==VGD_OK,'prof_nml','Generating VGD structure')
+    call handle_error1_l(ier==VGD_OK,'prof_nml','Generating VGD structure')
 
     ! Fill vertical coordinate information for physics reads
     nullify(ip1m,ip1t)
     refp0_s = 'PW_P0:P'
     refp0_ls_s = ' ' !Sleeve coordinates not supported in SCM
-    call handle_error_l(vgd_get(vcoord,'VIPM - IP1 MOMENTUM',ip1m)==VGD_OK,'prof_nml','Retrieving IP1(M)')
-    call handle_error(vgrid_wb_put('ref-m',vcoord,ip1m,refp0_s,refp0_ls_s,F_overwrite_L=.true.),'prof_nml','Creating vgrid_wb entry for IP1(M)')
-    call handle_error_l(vgd_get(vcoord,'VIPT - IP1 THERMO',ip1t)==VGD_OK,'prof_nml','Retrieving IP1(T)')
-    call handle_error(vgrid_wb_put('ref-t',vcoord,ip1t,refp0_s,refp0_ls_s,F_overwrite_L=.true.),'prof_nml','Creating vgrid_wb entry for IP1(T)')
+    call handle_error1_l(vgd_get(vcoord,'VIPM - IP1 MOMENTUM',ip1m)==VGD_OK,'prof_nml','Retrieving IP1(M)')
+    call handle_error1(vgrid_wb_put('ref-m',vcoord,ip1m,refp0_s,refp0_ls_s,F_overwrite_L=.true.),'prof_nml','Creating vgrid_wb entry for IP1(M)')
+    call handle_error1_l(vgd_get(vcoord,'VIPT - IP1 THERMO',ip1t)==VGD_OK,'prof_nml','Retrieving IP1(T)')
+    call handle_error1(vgrid_wb_put('ref-t',vcoord,ip1t,refp0_s,refp0_ls_s,F_overwrite_L=.true.),'prof_nml','Creating vgrid_wb entry for IP1(T)')
     nullify(ip1m,ip1t)
 
     ! Set size for output buffer
@@ -399,7 +402,7 @@ contains
 
     ! Error encountered during read
 100 ier = fclos(iun)
-    call handle_error(-1,'prof_nml','Reading from settings file '//trim(sfile))
+    call handle_error1(-1,'prof_nml','Reading from settings file '//trim(sfile))
 
   end subroutine prof_nml
 
@@ -460,18 +463,18 @@ contains
     ! Handle only humidity if physics are not being run
     if (.not.F_withphy) then
        allocate(tracers(1),stat=err)
-       call handle_error(err,'prof_tracers','Allocating no-physics tracer list')
+       call handle_error1(err,'prof_tracers','Allocating no-physics tracer list')
        tracers(1) = tracer(hu_gmm_name,hu_short_name,.false.)
        return
     endif
 
     ! Find list of tracers after pre-adding HU
     nullify(pmeta)
-    call handle_error_l(RMN_IS_OK(phy_getmeta(pmeta,' ',F_npath='V',F_bpath='D',F_quiet=.true.)), &
+    call handle_error1_l(RMN_IS_OK(phy_getmeta(pmeta,' ',F_npath='V',F_bpath='D',F_quiet=.true.)), &
          'prof_tracers','Cannot retrieve physics metadata')
     nvars = size(pmeta)
     allocate(tr_tmp(nvars+1),stat=err)
-    call handle_error(err,'prof_tracers','Allocating temporary tracer list')
+    call handle_error1(err,'prof_tracers','Allocating temporary tracer list')
     ntr = 1
     tr_tmp(ntr) = tracer(hu_gmm_name,hu_short_name,.false.)
     do i=1,nvars
@@ -481,17 +484,17 @@ contains
        call gmmx_name_parts(vname,prefix,basename,time,ext)
        if (any(tr_tmp(1:ntr)%name == basename)) cycle
        ntr = ntr + 1
-       call handle_error_l(ntr<=size(tr_tmp),'prof_tracers','Tracer buffer overflow')
+       call handle_error1_l(ntr<=size(tr_tmp),'prof_tracers','Tracer buffer overflow')
        tr_tmp(ntr) = tracer(vname,basename,pmeta(i)%wload)
     enddo
     deallocate(pmeta); nullify(pmeta)
 
     ! Create and fill final storage structure for tracers
     allocate(tracers(ntr),stat=err)
-    call handle_error(err,'prof_tracers','Allocating tracer list')
+    call handle_error1(err,'prof_tracers','Allocating tracer list')
     tracers = tr_tmp(1:ntr)
     deallocate(tr_tmp,stat=err)
-    call handle_error(err,'prof_tracers','Freeing temporary tracer list')
+    call handle_error1(err,'prof_tracers','Freeing temporary tracer list')
 
     ! Verbose output
     if (STDOUT.gt.0) then
@@ -541,46 +544,46 @@ contains
        if (len_trim(pw(i)%plus) > 0) then
           nullify(fld); gmmname = pw(i)%plus
           istat = gmm_create(gmmname,fld,meta3d)
-          call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
        endif
        if (len_trim(pw(i)%moins) > 0) then
           nullify(fld); gmmname = pw(i)%moins
           istat = gmm_create(gmmname,fld,meta3d)
-          call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
        endif
        if (len_trim(pw(i)%adv) > 0) then
           do j=1,size(suffix)
              nullify(fld); gmmname = trim(pw(i)%adv)//trim(suffix(j))
              istat = gmm_create(gmmname,fld,meta3d_inv)
-             call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
           enddo
        endif
        if (len_trim(pw(i)%bkg) > 0) then
           do j=1,size(suffix)
              nullify(fld); gmmname = trim(pw(i)%bkg)//trim(suffix(j))
              istat = gmm_create(gmmname,fld,meta3d_inv)
-             call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
           enddo
        endif
        if (len_trim(pw(i)%pre) > 0) then
           do j=1,size(suffix)
              nullify(fld); gmmname = trim(pw(i)%pre)//trim(suffix(j))
              istat = gmm_create(gmmname,fld,meta3d_inv)
-             call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
           enddo
        endif
        if (len_trim(pw(i)%geo) > 0) then
           do j=1,size(suffix)
              nullify(fld); gmmname = trim(pw(i)%geo)//trim(suffix(j))
              istat = gmm_create(gmmname,fld,meta3d_inv)
-             call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
           enddo
        endif
        if (len_trim(pw(i)%dyn) > 0) then
           do j=1,size(suffix)
              nullify(fld); gmmname = trim(pw(i)%dyn)//trim(suffix(j))
              istat = gmm_create(gmmname,fld,meta3d_inv)
-             call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
           enddo
        endif
     enddo
@@ -588,37 +591,37 @@ contains
     ! Create space for prescribed surface pressure and orographic height
     nullify(fld2d); gmmname = trim(gmmk_pw_me_moins_s)
     istat = gmm_create(gmmname,fld2d,meta2d)
-    call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
     nullify(fld2d); gmmname = trim(gmmk_pw_p0_moins_s)
     istat = gmm_create(gmmname,fld2d,meta2d)
-    call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
     nullify(fld2d); gmmname = trim(gmmk_pw_p0_plus_s)
     istat = gmm_create(gmmname,fld2d,meta2d)
-    call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
     do j=1,size(suffix)
        nullify(fld2d); gmmname = trim(gmmk_pre_p0_s)//trim(suffix(j))
        istat = gmm_create(gmmname,fld2d,meta2d,GMM_FLAG_INAN)
-       call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
     enddo
 
     ! Create space for requested tracers
     do i=1,size(tracers)
        nullify(tr); gmmname = 'TR/'//trim(tracers(i)%name)//':M'
        istat = gmm_create(gmmname,tr,meta3d_zero)
-       call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
        nullify(tr); gmmname = 'TR/'//trim(tracers(i)%name)//':P'
        istat = gmm_create(gmmname,tr,meta3d_zero)
-       call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
        do j=1,size(suffix)
           nullify(tr); gmmname = 'ADV_'//trim(tracers(i)%name)//trim(suffix(j))
           istat = gmm_create(gmmname,tr,meta3d_inv)
-          call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
           nullify(tr); gmmname = 'BKG_'//trim(tracers(i)%name)//trim(suffix(j))
           istat = gmm_create(gmmname,tr,meta3d_inv)
-          call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
           nullify(tr); gmmname = 'DYN_'//trim(tracers(i)%name)//trim(suffix(j))
           istat = gmm_create(gmmname,tr,meta3d_inv)
-          call handle_error_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_set_vt','Creating '//trim(gmmname))
        end do
     end do
 
@@ -648,7 +651,7 @@ contains
     call prof_dyn_adj(F_stepno)
 
     ! Verify forcing term validity for user
-    call handle_error_l(step_get('step_total',step_total)==STEP_OK,'prof_dyn_main','Retrieving step_total from step package')
+    call handle_error1_l(step_get('step_total',step_total)==STEP_OK,'prof_dyn_main','Retrieving step_total from step package')
     if (debug_L .or. F_stepno == step_total) call prof_valid_summary()
 
     ! Info messages
@@ -700,43 +703,43 @@ contains
     call prof_update_pres()
     nullify(pm,pt)
     istat = gmm_get(gmmk_pw_pm_plus_s,pm,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_pm_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_pm_plus_s))
     istat = gmm_get(gmmk_pw_pt_plus_s,pt,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
 
     ! Update height-coordinate vertical motion as a prescribed field
     nullify(wz)
     istat = gmm_get(gmmk_pw_wz_plus_s,wz,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_wz_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_wz_plus_s))
     call prof_w('height',wz)
 
     ! Compute pressure-coordinate vertical motion for prognostic equations
     nullify(ww)
     istat = gmm_get(gmmk_pw_ww_plus_s,ww,meta)   
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_ww_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_ww_plus_s))
     nk = size(ww,dim=3)
     call prof_w('pressure',ww)
     allocate(wwm(1,1,nk),stat=istat)
-    call handle_error(istat,'prof_dyn_fwd','Allocating vertical motion wwm')
+    call handle_error1(istat,'prof_dyn_fwd','Allocating vertical motion wwm')
     call vertint2(wwm,pm(:,:,1:nk),nk,ww,pt(:,:,1:nk),nk,1,1,1,1,1,1,1,1,varname='WW',inttype='linear')
 
     ! Update prognostic temperature
     nullify(plus,moins,adv,bkg,dyn)
     istat = gmm_get(gmmk_pw_tt_moins_s,moins,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_tt_moins_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_tt_moins_s))
     istat = gmm_get(gmmk_pw_tt_plus_s,plus,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_tt_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_tt_plus_s))
     nk = size(moins,dim=3)
     if (prof_is_valid(gmmk_dyn_t_s)) then
        istat = gmm_get(gmmk_dyn_t_s,dyn,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_dyn_t_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_dyn_t_s))
        plus = moins + my_dt * dyn
     else
        istat = gmm_get(gmmk_adv_t_s,adv,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_adv_t_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_adv_t_s))
        if (.not.prof_is_valid(gmmk_adv_t_s)) adv = 0.
        istat = gmm_get(gmmk_bkg_t_s,bkg,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_bkg_t_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_bkg_t_s))
        if (.not.prof_is_valid(gmmk_bkg_t_s)) bkg = moins
        plus = moins + my_dt * ( adv - prof_zadv(ww,moins,pt) + ww*(rgasd/cpd)*(moins/pt(:,:,1:nk)) + irelax * (bkg - moins) )
     endif
@@ -744,24 +747,24 @@ contains
     ! Update prognostic west wind
     nullify(plus,moins,adv,bkg,dyn,vv,vg)
     istat = gmm_get(gmmk_pw_uu_moins_s,moins,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_uu_moins_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_uu_moins_s))
     istat = gmm_get(gmmk_pw_uu_plus_s,plus,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_uu_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_uu_plus_s))
     if (prof_is_valid(gmmk_dyn_u_s)) then
        istat = gmm_get(gmmk_dyn_u_s,dyn,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_dyn_u_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_dyn_u_s))
        plus = moins + my_dt * dyn
     else
        istat = gmm_get(gmmk_adv_u_s,adv,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_adv_u_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_adv_u_s))
        if (.not.prof_is_valid(gmmk_adv_u_s)) adv = 0.
        istat = gmm_get(gmmk_bkg_u_s,bkg,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_bkg_u_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_bkg_u_s))
        if (.not.prof_is_valid(gmmk_bkg_u_s)) bkg = moins
        istat = gmm_get(gmmk_pw_vv_moins_s,vv,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_vv_moins_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_vv_moins_s))
        istat = gmm_get(gmmk_geo_v_s,vg,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_geo_v_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_geo_v_s))
        if (.not.prof_is_valid(gmmk_geo_v_s)) vg = vv
        plus = moins + my_dt * ( adv - prof_zadv(wwm,moins,pm) + fcor * (vv - vg) + irelax * (bkg - moins) )
     endif
@@ -769,24 +772,24 @@ contains
     ! Update prognostic south wind
     nullify(plus,moins,adv,bkg,dyn,uu,ug)
     istat = gmm_get(gmmk_pw_vv_moins_s,moins,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_vv_moins_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_vv_moins_s))
     istat = gmm_get(gmmk_pw_vv_plus_s,plus,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_vv_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_vv_plus_s))
     if (prof_is_valid(gmmk_dyn_v_s)) then
        istat = gmm_get(gmmk_dyn_v_s,dyn,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_dyn_v_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_dyn_v_s))
        plus = moins + my_dt * dyn
     else
        istat = gmm_get(gmmk_adv_v_s,adv,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_adv_v_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_adv_v_s))
        if (.not.prof_is_valid(gmmk_adv_v_s)) adv = 0.
        istat = gmm_get(gmmk_bkg_v_s,bkg,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_bkg_v_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_bkg_v_s))
        if (.not.prof_is_valid(gmmk_bkg_v_s)) bkg = moins
        istat = gmm_get(gmmk_pw_uu_moins_s,uu,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_uu_moins_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_pw_uu_moins_s))
        istat = gmm_get(gmmk_geo_u_s,ug,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_geo_u_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmk_geo_u_s))
        if (.not.prof_is_valid(gmmk_geo_u_s)) ug = uu
        plus = moins + my_dt * ( adv - prof_zadv(wwm,moins,pm) - fcor * (uu - ug) + irelax * (bkg - moins) )
     endif
@@ -796,23 +799,23 @@ contains
        nullify(plus,moins,adv,bkg,dyn)
        gmmname = 'TR/'//trim(tracers(i)%name)//':M'
        istat = gmm_get(gmmname,moins,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
        gmmname = 'TR/'//trim(tracers(i)%name)//':P'
        istat = gmm_get(gmmname,plus,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
        gmmname = 'DYN_'//trim(tracers(i)%name)
        if (prof_is_valid(gmmname)) then
           istat = gmm_get(gmmname,dyn,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
           plus = moins + my_dt * dyn
        else
           gmmname = 'ADV_'//trim(tracers(i)%name)
           istat = gmm_get(gmmname,adv,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
           if (.not.prof_is_valid(gmmname)) adv = 0.
           gmmname = 'BKG_'//trim(tracers(i)%name)
           istat = gmm_get(gmmname,bkg,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_dyn_fwd','GMM retrieving '//trim(gmmname))
           if (.not.prof_is_valid(gmmname)) bkg = moins
           plus = moins + my_dt * ( adv - prof_zadv(ww,moins,pt) + irelax * (bkg - moins) )
        endif
@@ -823,7 +826,7 @@ contains
 
     ! Garbage collection
     deallocate(wwm,stat=istat)
-    call handle_error(istat,'prof_dyn_fwd','Deallocating vertical motion wwm')
+    call handle_error1(istat,'prof_dyn_fwd','Deallocating vertical motion wwm')
 
   end subroutine prof_dyn_fwd
 
@@ -851,7 +854,7 @@ contains
           if (debug_L .or. F_stepno == 1) write(STDOUT,1000) 'GEM V4 (STAGGERED)'
        endif
     case DEFAULT
-       call handle_error_l(trim(emulate)=='none','prof_dyn_adj','Invalid emulation requested')
+       call handle_error1_l(trim(emulate)=='none','prof_dyn_adj','Invalid emulation requested')
     end select
 
     ! Error messages
@@ -895,7 +898,7 @@ contains
     ! Check for physics interface compatibility
     if (PHY_COMPATIBILITY_LVL /= COMPATIBILITY_LVL) then
        if (STDOUT > 0) write(STDOUT,9001) COMPATIBILITY_LVL,PHY_COMPATIBILITY_LVL
-       call handle_error(-1,'prof_phy_init','Incompatible physics API')
+       call handle_error1(-1,'prof_phy_init','Incompatible physics API')
     else
        if (STDOUT > 0) write(STDOUT,1002) COMPATIBILITY_LVL
     endif
@@ -908,16 +911,16 @@ contains
     err= min(wb_put('model/Init/mode',.false.),err)
     err= min(wb_put('model/Init/halfspan',-1),err)
     err= min(wb_put('model/Vgrid/ptop',cstv_ptop_8),err)
-    call handle_error_l(WB_IS_OK(err),'prof_phy_init','Error filling mandatory whiteboard entries')
+    call handle_error1_l(WB_IS_OK(err),'prof_phy_init','Error filling mandatory whiteboard entries')
 
     ! Initialize optional parameters
     err = WB_OK
-    call handle_error_l(WB_IS_OK(err),'prof_phy_init','Error filling optional whiteboard entries')
+    call handle_error1_l(WB_IS_OK(err),'prof_phy_init','Error filling optional whiteboard entries')
 
     ! Initialize physics configuration with default values and read
     ! user configuration in namelist from file 'model_settings'
     err = phy_nml(trim(path_inputs_s)//'/model_settings.nml')
-    call handle_error(err,'prof_phy_init','Error received from phy_nml')
+    call handle_error1(err,'prof_phy_init','Error received from phy_nml')
     F_withphy = (err == PHY_OK)
     if (.not. F_withphy) return
 
@@ -932,27 +935,27 @@ contains
        std_p_prof(1) = cstv_ptop_8
        std_p_prof(2:p_nk) = pres_prof
     case DEFAULT
-       call handle_error(-1,'prof_phy_init','Invalid profile retrieved from prof_std_pres()')
+       call handle_error1(-1,'prof_phy_init','Invalid profile retrieved from prof_std_pres()')
     end select
 
     ! Complete physics initialization (bus descriptions become available)
     call datp2f(dateo,start_date)
     err = phy_init(trim(path_inputs_s)//'/',dateo,real(cstv_dt_8), &
          'grid/scm','grid/scm','grid/scm','grid/scm',p_nk,std_p_prof)
-    call handle_error(err,'prof_phy_init','Error received from phy_init')
+    call handle_error1(err,'prof_phy_init','Error received from phy_init')
 
     ! Complete physics filtering handshake (implemented as profile copies at each step)
     err = WB_OK
     if (.not.WB_IS_OK(wb_get('phy/sgo_tdfilter',gwd_sig))) gwd_sig=-1.
     if (gwd_sig > 0.) call msg(MSG_WARNING,'(prof_phy_init) Option sgo_tdfilter is ignored by the SCM')
     err = min(wb_put('dyn/sgo_tdfilter',gwd_sig), err)
-    call handle_error_l(WB_IS_OK(err),'prof_phy_init','Error in physics filtering handshake')
+    call handle_error1_l(WB_IS_OK(err),'prof_phy_init','Error in physics filtering handshake')
 
     ! Retrieve the heights of the diagnostic levels (thermodynamic and momentum) from the physics
     err = WB_OK
     err= min(wb_get('phy/zu', zu), err)
     err= min(wb_get('phy/zt', zt), err)
-    call handle_error_l(WB_IS_OK(err),'prof_phy_init','Error retrieving mandatory whiteboard entries')
+    call handle_error1_l(WB_IS_OK(err),'prof_phy_init','Error retrieving mandatory whiteboard entries')
 
     ! Add the diagnostic heights to the vertical coordinate of the model
     err = VGD_OK
@@ -961,7 +964,7 @@ contains
     call convip_plus(ztip,zt,level_kind_diag,+2,'',.true.)
     err = min(vgd_put(vcoord,'DIPM - IP1 of diagnostic level (m)',zuip), err)
     err = min(vgd_put(vcoord,'DIPT - IP1 of diagnostic level (t)',ztip), err)
-    call handle_error_l(err==VGD_OK,'prof_phy_init','Setting diagnostic levels (DIPM/T)')
+    call handle_error1_l(err==VGD_OK,'prof_phy_init','Setting diagnostic levels (DIPM/T)')
 
     ! Error messages
 1000 format(/,'INITIALIZATION OF PHYSICS PACKAGE (S/R prof_phy_init)', &
@@ -990,13 +993,13 @@ contains
     ! Create grid-specific fields (must be after the input files are read, not in prof_phy_init)
     if (F_stepno == 0) then
        call prof_phy_geom(err)
-       call handle_error(err,'prof_phy_step','Error establishing grid-specific fields')
+       call handle_error1(err,'prof_phy_step','Error establishing grid-specific fields')
     endif
 
     ! Process physics inputs
     err = phy_input1(prof_phy_prefold_opr,F_stepno,trim(path_inputs_s)//'/physics_input_table', &
          trim(path_inputs_s)//'/','GEOPHY/Scm_geophy.fst')
-    call handle_error(err,'prof_phy_step','Acquiring input data')
+    call handle_error1(err,'prof_phy_step','Acquiring input data')
 
     ! Create a copy of state variables as "smoothed" fields
     err = min(prof_smooth_fld('PW_TT:M','TTMS'), &
@@ -1004,12 +1007,12 @@ contains
          prof_smooth_fld('PW_TT:P','TTPS'), &
          prof_smooth_fld('TR/HU:P','HUPS') &
          )
-    call handle_error(err,'prof_phy_step','Problem with prof_smooth_fld')
+    call handle_error1(err,'prof_phy_step','Problem with prof_smooth_fld')
 
     ! Take a physics step
     if (STDOUT.gt.0) write(STDOUT,1002) F_stepno
     err = phy_step(F_stepno,F_lctl_step)
-    call handle_error(err,'prof_phy_step','Taking a physics step')
+    call handle_error1(err,'prof_phy_step','Taking a physics step')
 
     ! Apply physics tendencies to the physical world
     call prof_phy_update(F_stepno > 0)
@@ -1132,35 +1135,35 @@ contains
     apply_tendencies: if (F_apply_L) then
        do k=1,size(tracers)
           trname = 'TR/'//trim(tracers(k)%name)//':P'
-          call handle_error_l(GMM_IS_OK(gmm_get(trname,data3d)),'prof_phy_update','GMM get for '//trim(trname))
+          call handle_error1_l(GMM_IS_OK(gmm_get(trname,data3d)),'prof_phy_update','GMM get for '//trim(trname))
           array_end = (/1,1,size(data3d,dim=3)/)
-          call handle_error_l(RMN_IS_OK(phy_get(data3d,trname,F_npath='V',F_bpath='D',F_end=array_end)),&
+          call handle_error1_l(RMN_IS_OK(phy_get(data3d,trname,F_npath='V',F_bpath='D',F_end=array_end)),&
                'prof_phy_update','Unfolding for '//trim(trname))
        enddo
-       call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_uu_plus_s,data3d)),'prof_phy_update','GMM get for '//trim(gmmk_pw_uu_plus_s))
+       call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_uu_plus_s,data3d)),'prof_phy_update','GMM get for '//trim(gmmk_pw_uu_plus_s))
        array_end = (/1,1,size(data3d,dim=3)/)
-       call handle_error_l(RMN_IS_OK(phy_get(data3d,gmmk_pw_uu_plus_s,F_npath='V',F_bpath='D',F_end=array_end)), &
+       call handle_error1_l(RMN_IS_OK(phy_get(data3d,gmmk_pw_uu_plus_s,F_npath='V',F_bpath='D',F_end=array_end)), &
             'prof_phy_update','Unfolding for '//trim(gmmk_pw_uu_plus_s))
-       call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_vv_plus_s,data3d)),'prof_phy_update','GMM get for '//trim(gmmk_pw_vv_plus_s))
+       call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_vv_plus_s,data3d)),'prof_phy_update','GMM get for '//trim(gmmk_pw_vv_plus_s))
        array_end = (/1,1,size(data3d,dim=3)/)
-       call handle_error_l(RMN_IS_OK(phy_get(data3d,gmmk_pw_vv_plus_s,F_npath='V',F_bpath='D',F_end=array_end)), &
+       call handle_error1_l(RMN_IS_OK(phy_get(data3d,gmmk_pw_vv_plus_s,F_npath='V',F_bpath='D',F_end=array_end)), &
             'prof_phy_update','Unfolding for '//trim(gmmk_pw_vv_plus_s))
-       call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_tt_plus_s,data3d)),'prof_phy_update','GMM get for '//trim(gmmk_pw_tt_plus_s))
+       call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_tt_plus_s,data3d)),'prof_phy_update','GMM get for '//trim(gmmk_pw_tt_plus_s))
        array_end = (/1,1,size(data3d,dim=3)/)
-       call handle_error_l(RMN_IS_OK(phy_get(data3d,gmmk_pw_tt_plus_s,F_npath='V',F_bpath='D',F_end=array_end)), &
+       call handle_error1_l(RMN_IS_OK(phy_get(data3d,gmmk_pw_tt_plus_s,F_npath='V',F_bpath='D',F_end=array_end)), &
             'prof_phy_update','Unfolding for '//trim(gmmk_pw_tt_plus_s))
     else
-       call handle_error_l(WB_IS_OK(wb_get('itf_phy/READ_TRACERS',read_tr,nread_tr)),'prof_phy_update','Retrieving read tracer list')
+       call handle_error1_l(WB_IS_OK(wb_get('itf_phy/READ_TRACERS',read_tr,nread_tr)),'prof_phy_update','Retrieving read tracer list')
        cnt = 0
        do k=1,size(tracers)
           if (tracers(k)%name == 'HU' .or. any(read_tr(1:nread_tr) == tracers(k)%name)) cycle
           trname = 'TR/'//trim(tracers(k)%name)//':P'
-          call handle_error_l(GMM_IS_OK(gmm_get(trim(trname),data3d)),'prof_phy_update','Initial GMM get for '//trim(trname))
+          call handle_error1_l(GMM_IS_OK(gmm_get(trim(trname),data3d)),'prof_phy_update','Initial GMM get for '//trim(trname))
           array_end = (/1,1,size(data3d,dim=3)/)
-          call handle_error_l(RMN_IS_OK(phy_get(data3d,trname,F_npath='V',F_bpath='D',F_end=array_end)),&
+          call handle_error1_l(RMN_IS_OK(phy_get(data3d,trname,F_npath='V',F_bpath='D',F_end=array_end)),&
                'prof_phy_update','Unfolding for '//trim(trname))
           trname = 'TR/'//trim(tracers(k)%name)//':M'
-          call handle_error_l(GMM_IS_OK(gmm_get(trname,minus)),'prof_phy_update','Initial GMM get for '//trim(trname))
+          call handle_error1_l(GMM_IS_OK(gmm_get(trname,minus)),'prof_phy_update','Initial GMM get for '//trim(trname))
           minus = data3d
           cnt = cnt+1
        enddo
@@ -1191,23 +1194,23 @@ contains
 
     ! Shuffle variables
     istat = gmm_shuffle(pw_u_list)
-    call handle_error_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling U-list')
+    call handle_error1_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling U-list')
     istat = gmm_shuffle(pw_v_list)
-    call handle_error_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling V-list')
+    call handle_error1_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling V-list')
     istat = gmm_shuffle(pw_t_list)
-    call handle_error_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling T-list')
+    call handle_error1_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling T-list')
     istat = gmm_shuffle(pw_pm_list)
-    call handle_error_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling PM-list')
+    call handle_error1_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling PM-list')
     istat = gmm_shuffle(pw_pt_list)
-    call handle_error_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling PT-list')
+    call handle_error1_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling PT-list')
     istat = gmm_shuffle(pw_p0_list)
-    call handle_error_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling P0-list')
+    call handle_error1_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling P0-list')
 
     ! Shuffle tracers
     do i=1,size(tracers)
        tr_list = (/'TR/'//trim(tracers(i)%name)//':M','TR/'//trim(tracers(i)%name)//':P'/)
        istat = gmm_shuffle(tr_list)
-       call handle_error_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling tracer list')
+       call handle_error1_l(GMM_IS_OK(istat),'prof_timeflip','Shuffling tracer list')
     end do
 
   end subroutine prof_timeflip
@@ -1242,13 +1245,13 @@ contains
     if (F_stepno == 0) then
        write(STDOUT,1000) trim(start_date)
        call prof_read_data(start_date,'',F_init=.true.)
-       call handle_error_l(prof_is_valid(gmmk_pre_ww_s).or.prof_is_valid(gmmk_pre_wz_s),'prof_input_data', &
+       call handle_error1_l(prof_is_valid(gmmk_pre_ww_s).or.prof_is_valid(gmmk_pre_wz_s),'prof_input_data', &
             'Vertical motion must be prescribed in init file')
        call prof_dyn_fwd(F_diag=.true.)
     endif
 
     ! If no time evolution is requested, read initial state only
-    call handle_error_l(step_get('step_nesdt',nesdt)==STEP_OK,'prof_input_data','Retrieving step_nesdt from step package')
+    call handle_error1_l(step_get('step_nesdt',nesdt)==STEP_OK,'prof_input_data','Retrieving step_nesdt from step package')
     if ((F_stepno > 1 .and. nesdt <= 0) .or. .not.dyn_forcings) return
 
     ! All forcings are evaluated at the end of the timestep
@@ -1262,7 +1265,7 @@ contains
        call prof_read_data(prev_date,':PREV',F_mode=forcing_update)
 
        ! Retrieve total step number to check for run completion
-       call handle_error_l(step_get('step_total',step_total)==STEP_OK,'prof_input_data','Retrieving step_total from step package')
+       call handle_error1_l(step_get('step_total',step_total)==STEP_OK,'prof_input_data','Retrieving step_total from step package')
 
        ! Set the next date to read (do not read on last time step)
        if (F_stepno < step_total .and. nesdt > 0) then
@@ -1282,7 +1285,7 @@ contains
        case ('linear')
           alpha = mod(real(cstv_dt_8)*tstep,real(nesdt))/real(nesdt)
        case DEFAULT
-          call handle_error(-1,'prof_input_data','Invalid forcing update mode '//trim(forcing_update))
+          call handle_error1(-1,'prof_input_data','Invalid forcing update mode '//trim(forcing_update))
        end select
     endif
     zero = 0.
@@ -1290,14 +1293,14 @@ contains
     ! Compile a full list of 3D key names
     w_index = size(basic_keys3d)+1
     allocate(keys3d(w_index+size(tr_force)*size(tracers)),stat=err)
-    call handle_error(err,'prof_input_data','Allocating keys3d')
+    call handle_error1(err,'prof_input_data','Allocating keys3d')
     keys3d(1:size(basic_keys3d)) = basic_keys3d
     if (prof_is_valid(gmmk_pre_ww_s)) then
        keys3d(w_index) = gmmk_pre_ww_s
     elseif (prof_is_valid(gmmk_pre_wz_s)) then
        keys3d(w_index) = gmmk_pre_wz_s
     else
-       call handle_error(-1,'prof_input_data','Vertical motion must be prescribed')
+       call handle_error1(-1,'prof_input_data','Vertical motion must be prescribed')
     endif
     do i=1,size(tracers)
        do cnt=1,size(tr_force)
@@ -1309,13 +1312,13 @@ contains
     do i=1,size(keys3d)
        if (prof_is_valid(trim(keys3d(i))//':PREV')) then
           istat = gmm_get(keys3d(i),fld3d,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys3d(i)))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys3d(i)))
           call prof_make_valid(keys3d(i))
           istat = gmm_get(trim(keys3d(i))//':PREV',fld3d_prev,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys3d(i))//':PREV')
+          call handle_error1_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys3d(i))//':PREV')
           if (prof_is_valid(trim(keys3d(i))//':NEXT')) then
              istat = gmm_get(trim(keys3d(i))//':NEXT',fld3d_next,meta)
-             call handle_error_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys3d(i))//':NEXT')
+             call handle_error1_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys3d(i))//':NEXT')
           else
              fld3d_next => zero(:,:,1:size(fld3d,dim=3))
           endif
@@ -1325,13 +1328,13 @@ contains
     do i=1,size(keys2d)
        if (prof_is_valid(trim(keys2d(i))//':PREV')) then
           istat = gmm_get(keys2d(i),fld2d,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys2d(i)))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys2d(i)))
           call prof_make_valid(keys2d(i))
           istat = gmm_get(trim(keys2d(i))//':PREV',fld2d_prev,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys2d(i))//':PREV')
+          call handle_error1_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys2d(i))//':PREV')
           if (prof_is_valid(trim(keys2d(i))//':NEXT')) then
              istat = gmm_get(trim(keys2d(i))//':NEXT',fld2d_next,meta)
-             call handle_error_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys2d(i))//':NEXT')
+             call handle_error1_l(GMM_IS_OK(istat),'prof_input_data','GMM retrieving '//trim(keys2d(i))//':NEXT')
           else
              fld2d_next => zero(:,:,1)
           endif
@@ -1341,7 +1344,7 @@ contains
 
     ! Garbage collection
     deallocate(keys3d,stat=err)
-    call handle_error(err,'prof_input_data','Freeing keys3d')
+    call handle_error1(err,'prof_input_data','Freeing keys3d')
 
     ! Info messages
 1000 format(/,'TREATING INITIAL CONDITIONS AT ',a,' (S/R PROF_INPUT_DATA)',/,68('='))
@@ -1407,10 +1410,10 @@ contains
     ! Read general header to get information
     iun = 0; fname = trim(Path_inputs_S)//'/INREP/'//trim(fprefix)//trim(F_date)//'.ptxt'
     ier = fnom(iun,fname,'OLD+R/O',0)
-    call handle_error(ier,'prof_read_data','Opening '//trim(fname))
+    call handle_error1(ier,'prof_read_data','Opening '//trim(fname))
     read(iun,*) ftype,version,hlen
     if (trim(ftype) /= 'PTXT') &
-         call handle_error(-1,'prof_read_data','Bad file type '//trim(ftype))
+         call handle_error1(-1,'prof_read_data','Bad file type '//trim(ftype))
 
     ! Read data using the appropriate format
     select case (version)
@@ -1424,18 +1427,18 @@ contains
 
        ! Read version-specific header information
        read(iun,*) mode,kind,lat,lon,elev,topo_interp,date_check
-       call handle_error_l(trim(F_date)==trim(date_check),'prof_read_data','Date mismatch for '//trim(F_date))
+       call handle_error1_l(trim(F_date)==trim(date_check),'prof_read_data','Date mismatch for '//trim(F_date))
        read(iun,*) nvar2d,(vars2d(k),k=1,nvar2d)
-       call handle_error_l(nvar2d<=MAXVARS,'prof_read_data','More 2D variables found than permitted')
+       call handle_error1_l(nvar2d<=MAXVARS,'prof_read_data','More 2D variables found than permitted')
        read(iun,*) nvar3d,(vars3d(k),k=1,nvar3d)
-       call handle_error_l(nvar3d<=MAXVARS,'prof_read_data','More 3D variables found than permitted')
+       call handle_error1_l(nvar3d<=MAXVARS,'prof_read_data','More 3D variables found than permitted')
 
        ! Check lat/lon of input file and warn if necessary
        if (init) then
           file_lat = lat; file_lon = lon
        else
           if (abs(lat-file_lat) > PT_TOLERANCE .or. abs(lon-file_lon) > PT_TOLERANCE) &
-               call handle_error(-1,'prof_read_data','Illegal profile position change at '//trim(F_date))
+               call handle_error1(-1,'prof_read_data','Illegal profile position change at '//trim(F_date))
        endif
        if (maxval(prof_point) < -100D0) then
           prof_point = (/dble(lat),dble(lon)/)
@@ -1451,7 +1454,7 @@ contains
                 else
                    write(STDERR,1002) 'ERROR: PRESCRIBED LAT/LON POSITION DOES NOT MATCH INPUT FILE (S/R PROF_READ_DATA)',&
                         prof_point(1),prof_point(2),lat,lon,'USE ALLOW_MOVE=.TRUE. TO RUN AT THE PRESCRIBED POSITION'
-                   call handle_error(-1,'prof_read_data','Invalid profile position')
+                   call handle_error1(-1,'prof_read_data','Invalid profile position')
                 endif
              endif
           endif
@@ -1460,7 +1463,7 @@ contains
        ! Read 2D fields
        do i=1,nvar2d
           read(iun,*) var_check,nlevs,staglev,interp,levs(1),data(1,1,1)
-          call handle_error_l(trim(var_check)==trim(vars2d(i)),'prof_read_data','Corrupted input file (2D)')
+          call handle_error1_l(trim(var_check)==trim(vars2d(i)),'prof_read_data','Corrupted input file (2D)')
           pos = index(var_check,'^')
           do while (pos > 0)
              var_check(pos:pos) = '/'
@@ -1469,27 +1472,27 @@ contains
           nullify(ptr2d)
           gmmname = trim(var_check)//trim(F_suffix)
           istat = gmm_get(gmmname,ptr2d,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry (2D) for '//trim(gmmname))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry (2D) for '//trim(gmmname))
           call prof_make_valid(gmmname)
           ptr2d(1,1) = data(1,1,1)
        enddo
        nullify(p0)
        istat = gmm_get(gmmk_pre_p0_s,p0,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Surface pressure (P0) not found for '//trim(F_date))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Surface pressure (P0) not found for '//trim(F_date))
 
        ! Compute model levels (pressure) for the specified date
        call prof_update_pres()
        nullify(presm,prest,ptr3d)
        istat = gmm_get(gmmk_pw_pm_plus_s,presm,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pm_plus_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pm_plus_s))
        istat = gmm_get(gmmk_pw_pt_plus_s,prest,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pt_plus_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pt_plus_s))
        if (init) then
           istat = gmm_get(gmmk_pw_pm_moins_s,ptr3d,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pm_moins_s))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pm_moins_s))
           ptr3d = presm
           istat = gmm_get(gmmk_pw_pt_moins_s,ptr3d,meta)
-          call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pt_moins_s))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_pt_moins_s))
           ptr3d = prest
        endif
 
@@ -1545,9 +1548,9 @@ contains
              pprof%val(p_nk) = p0(1,1)
              nullify(ptr2d,ptr3d)
              istat = gmm_get(gmmk_pw_gz_plus_s,ptr3d,meta)
-             call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_gz_plus_s))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_gz_plus_s))
              istat = gmm_get(gmmk_pw_me_moins_s,ptr2d,meta)
-             call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_me_moins_s))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_me_moins_s))
              pprof%lev(p_nk-1) = (ptr3d(1,1,p_nk-1)+ptr2d(1,1))/2.
              do k=p_nk-2,1,-1
                 pprof%lev(k) = (ptr3d(1,1,k)+ptr3d(1,1,k+1))/2.
@@ -1558,13 +1561,13 @@ contains
              tt%lev = pprof%val
              nullify(ptr3d)
              istat = gmm_get(gmmk_pw_tt_plus_s,ptr3d,meta)
-             call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_tt_plus_s))
+             call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_tt_plus_s))
              nk_ptr = size(ptr3d,dim=3)
              tt%val(1:nk_ptr) = ptr3d(1,1,:)
              tt%val(nk_ptr:) = ptr3d(1,1,nk_ptr)
              nullify(ptr3d)
              istat = gmm_get('TR/HU:M',ptr3d,meta)
-             call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for TR/HU:M')
+             call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for TR/HU:M')
              nk_ptr = size(ptr3d,dim=3)
              hu%val(1:nk_ptr) = ptr3d(1,1,:)
              hu%val(nk_ptr:) = ptr3d(1,1,nk_ptr)
@@ -1582,14 +1585,14 @@ contains
        allocate(pres(1,1,p_nk))
        do i=1,nvar3d
           read(iun,*) var_check,nlevs,staglev,interp,(levs(k),k=1,nlevs),(data(1,1,k),k=1,nlevs)
-          call handle_error_l(trim(var_check)==trim(vars3d(i)),'prof_read_data','Corrupted input file (3D)')
+          call handle_error1_l(trim(var_check)==trim(vars3d(i)),'prof_read_data','Corrupted input file (3D)')
           select case (trim(staglev))
           case ('M')
              pres(1,1,1:p_nk-1) = presm(1,1,:)
           case ('T')
              pres(1,1,1:p_nk-1) = prest(1,1,:)
           case DEFAULT
-             call handle_error(-1,'prof_read_data','Invalid staggered level name '//trim(staglev))
+             call handle_error1(-1,'prof_read_data','Invalid staggered level name '//trim(staglev))
           end select
           pres(1,1,p_nk) = p0(1,1)
           pos = index(var_check,'^')
@@ -1622,17 +1625,17 @@ contains
           nullify(ptr3d)
           gmmname = trim(var_check)//trim(F_suffix)
           ! Handle either 'WW' (pressure coordinate) or 'WT1' (height coordinate) vertical motion prescription
-          call handle_error_l(.not.((gmmname == gmmk_pre_ww_s .and. prof_is_valid(gmmk_pre_wz_s)) .or. &
+          call handle_error1_l(.not.((gmmname == gmmk_pre_ww_s .and. prof_is_valid(gmmk_pre_wz_s)) .or. &
                (gmmname == gmmk_pre_wz_s .and. prof_is_valid(gmmk_pre_ww_s))), &
                'prof_read_data','Only one of PRE_WW and PRE_WT1 can be defined')
           ! Confirm validity of GMM name and fall back to base name if necessary
           if (.not.GMM_IS_OK(gmm_get(gmmname,ptr3d))) then
              call gmmx_name_parts(gmmname,prefix,basename,time,ext)
-             call handle_error_l(RMN_IS_OK(phy_getmeta(pmeta,basename)),'prof_read_data', &
+             call handle_error1_l(RMN_IS_OK(phy_getmeta(pmeta,basename)),'prof_read_data', &
                   'Cannot find '//trim(var_check)//' as '//trim(basename)//' in physics variable database')
              gmmname = pmeta%vname
              istat = clib_toupper(gmmname)
-             call handle_error_l(GMM_IS_OK(gmm_get(gmmname,ptr3d)),'prof_read_data',&
+             call handle_error1_l(GMM_IS_OK(gmm_get(gmmname,ptr3d)),'prof_read_data',&
                   'Invalid GMM entry (3D) for '//trim(var_check))
           endif
           ! Add record to GMM
@@ -1658,7 +1661,7 @@ contains
     if (init) then
        nullify(ptr2d)
        istat = gmm_get(gmmk_pw_me_moins_s,ptr2d,meta)
-       call handle_error_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_me_moins_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_read_data','Invalid GMM entry for '//trim(gmmk_pw_me_moins_s))
        ptr2d = grav*elev
     endif
 
@@ -1666,7 +1669,7 @@ contains
     ! all the tracer reads because of the entry's IPC.  In the SCM, prof_phy_init() is called before the
     ! input files are read, so this is our first opportunity to set the read tracer value.
     if (init) then
-       call handle_error_l(&
+       call handle_error1_l(&
             WB_IS_OK( &
             wb_put('itf_phy/READ_TRACERS',read_tr(1:nread_tr)) &
             ), &
@@ -1722,77 +1725,77 @@ contains
     ! Open input file for reading
     iun = 0
     ier = fnom(iun,trim(F_file),'RND+OLD+R/O',0)
-    call handle_error(ier,'prof_get_field','Acquiring lock for '//trim(F_file))
+    call handle_error1(ier,'prof_get_field','Acquiring lock for '//trim(F_file))
     ier = fstouv(iun,'RND')
-    call handle_error(ier,'prof_get_field','Opening '//trim(F_file))
+    call handle_error1(ier,'prof_get_field','Opening '//trim(F_file))
     write(STDOUT,1000) trim(F_file),iun
 
     ! Find key for first matching record in the file
     key = fstinf(iun,nis,njs,nks,-1,'',-1,-1,-1,'',trim(F_name))
-    call handle_error_l(key>=0,'prof_get_field','Finding a matching record for '//trim(F_name))
-    call handle_error_l(nks==1,'prof_get_field','Record for '//trim(F_name)//' contains multiple levels')
+    call handle_error1_l(key>=0,'prof_get_field','Finding a matching record for '//trim(F_name))
+    call handle_error1_l(nks==1,'prof_get_field','Record for '//trim(F_name)//' contains multiple levels')
 
     ! Read input field
     allocate(src(nis,njs),stat=ier)
-    call handle_error(ier,'prof_get_field','Allocating src')
+    call handle_error1(ier,'prof_get_field','Allocating src')
     ier = fstluk(src,key,nii,njj,nkk)
-    call handle_error(ier,'prof_get_field','Reading record '//trim(F_name)//' from '//trim(F_file))
+    call handle_error1(ier,'prof_get_field','Reading record '//trim(F_name)//' from '//trim(F_file))
 
     ! Retrieve required destination grid (point) information
     ier = ezgprm(F_gid,grtyp_dest,nid,njd,ig1d,ig2d,ig3d,ig4d)
-    call handle_error(ier,'prof_get_field','Retrieving information for source grid')
+    call handle_error1(ier,'prof_get_field','Retrieving information for source grid')
     allocate(axd(nid),ayd(njd),stat=ier)
-    call handle_error(ier,'prof_get_field','Allocating axd/ayd')
+    call handle_error1(ier,'prof_get_field','Allocating axd/ayd')
     ier = gdgxpndaxes(F_gid,axd,ayd)
-    call handle_error(ier,'prof_get_field','Retrieving axis information for source grid')
+    call handle_error1(ier,'prof_get_field','Retrieving axis information for source grid')
 
     ! Define source grid and compare to model grid
     ier = fstprm(key,dateo,deet,npas,nii,njj,nkk,nbits,datyp,ip1,ip2,ip3,typvar,nomvar, &
          etiket,grtyp_fld,ig1,ig2,ig3,ig4,swa,lng,dltf,ubc,ex1,ex2,ex3)
-    call handle_error(ier,'prof_get_field','Accesing record details in '//trim(F_file))
+    call handle_error1(ier,'prof_get_field','Accesing record details in '//trim(F_file))
     if (grtyp_fld == 'Z' .or. grtyp_fld == 'Y') then
        allocate(ax(nis),ay(njs),stat=ier)
-       call handle_error(ier,'prof_get_field','Allocating ax/ay')
+       call handle_error1(ier,'prof_get_field','Allocating ax/ay')
        key = fstinf(iun,nii,njj,nkk,-1,'',ig1,ig2,-1,'','>>')
-       call handle_error_l(key>=0,'prof_get_field','Finding >> record in '//trim(F_file))
+       call handle_error1_l(key>=0,'prof_get_field','Finding >> record in '//trim(F_file))
        ier = fstluk(ax,key,nii,njj,nkk)
-       call handle_error_l(key>=0,'prof_get_field','Reading >> record from '//trim(F_file))
+       call handle_error1_l(key>=0,'prof_get_field','Reading >> record from '//trim(F_file))
        key = fstinf(iun,nii,njj,nkk,-1,'',ig1,ig2,-1,'','^^')
-       call handle_error_l(key>=0,'prof_get_field','Finding ^^ record in '//trim(F_file))
+       call handle_error1_l(key>=0,'prof_get_field','Finding ^^ record in '//trim(F_file))
        ier = fstluk(ay,key,nii,njj,nkk)
-       call handle_error_l(key>=0,'prof_get_field','Reading ^^ record from '//trim(F_file))
+       call handle_error1_l(key>=0,'prof_get_field','Reading ^^ record from '//trim(F_file))
        ier = fstprm(key,dateo,deet,npas,nii,njj,nkk,nbits,datyp,ip1,ip2,ip3,typvar,nomvar, &
             etiket,grtyp_pos,ig1,ig2,ig3,ig4,swa,lng,dltf,ubc,ex1,ex2,ex3)
-       call handle_error(ier,'prof_get_field','Accessing record details in '//trim(F_file))
+       call handle_error1(ier,'prof_get_field','Accessing record details in '//trim(F_file))
        sgid = ezgdef_fmem(nis,njs,grtyp_fld,grtyp_pos,ig1,ig2,ig3,ig4,ax,ay)
-       call handle_error_l(sgid>=0,'prof_get_field','Setting source grid definition in ezscint')
+       call handle_error1_l(sgid>=0,'prof_get_field','Setting source grid definition in ezscint')
        call samegrid2(nis,njs,ig1,ig2,ig3,ig4,ax,ay,nid,njd,ig1d,ig2d,ig3d,ig4d,axd,ayd,interp)
     else
        sgid = ezqkdef(nis,njs,grtyp_fld,ig1,ig2,ig3,ig4,iun)
-       call handle_error_l(sgid>=0,'prof_get_field','Setting '//trim(grtyp_fld)//'-type source grid in ezscint')
+       call handle_error1_l(sgid>=0,'prof_get_field','Setting '//trim(grtyp_fld)//'-type source grid in ezscint')
     endif
 
     ! Interpolate to model grid
     write(STDOUT,1001) trim(F_name),trim(interp)
     ier = ezdefset(F_gid,sgid)
-    call handle_error(ier,'prof_get_field','Creating grid interpolation set (ezscint)')
+    call handle_error1(ier,'prof_get_field','Creating grid interpolation set (ezscint)')
     ier = ezsetopt('INTERP_DEGREE',trim(interp))
-    call handle_error(ier,'prof_get_field','Setting interpolation order to '//trim(interp))
+    call handle_error1(ier,'prof_get_field','Setting interpolation order to '//trim(interp))
     ier = ezsint(F_fld,src)
-    call handle_error(ier,'prof_get_field','Interpolating field '//trim(F_name))
+    call handle_error1(ier,'prof_get_field','Interpolating field '//trim(F_name))
 
     ! Close input file
     ier = fstfrm(iun)
-    call handle_error(ier,'prof_get_field','Closing '//trim(F_file))
+    call handle_error1(ier,'prof_get_field','Closing '//trim(F_file))
     ier = fclos(iun)
-    call handle_error(ier,'prof_get_field','Releasing lock for '//trim(F_file))
+    call handle_error1(ier,'prof_get_field','Releasing lock for '//trim(F_file))
 
     ! Garbage collection
     deallocate(src,axd,ayd,stat=ier)
-    call handle_error(ier,'prof_get_field','Freeing src/axd/ayd')
+    call handle_error1(ier,'prof_get_field','Freeing src/axd/ayd')
     if (allocated(ax)) then
        deallocate(ax,ay,stat=ier)
-       call handle_error(ier,'prof_get_field','Freeing ax/ay')
+       call handle_error1(ier,'prof_get_field','Freeing ax/ay')
     endif
 
     ! Info messages
@@ -1825,7 +1828,7 @@ contains
     endif
 
     ! Prevent multiple initializations
-    if (initialized) call handle_error(-1,'prof_output_pre_init','Attempted double call to output pre-initialization')
+    if (initialized) call handle_error1(-1,'prof_output_pre_init','Attempted double call to output pre-initialization')
     initialized = .true.
 
     ! Provide list of requested fields to the physics
@@ -1837,7 +1840,7 @@ contains
     enddo
     nout = nout-1
     istat = min(wb_put('itf_phy/PHYOUT',out_varlist(1:nout)(1:32)),istat)
-    call handle_error(istat,'prof_output_pre_init','Creating list of physics output requests')
+    call handle_error1(istat,'prof_output_pre_init','Creating list of physics output requests')
 
   end subroutine prof_output_pre_init
 
@@ -1881,12 +1884,12 @@ contains
     endif
 
     ! Prevent multiple initializations
-    if (initialized) call handle_error(-1,'prof_output_post_init','Attempted double call to output post-initialization')
+    if (initialized) call handle_error1(-1,'prof_output_post_init','Attempted double call to output post-initialization')
     initialized = .true.
 
     ! Check for output pre-initialization
     call prof_output_pre_init(F_initialized=pre_init)
-    call handle_error_l(pre_init,'prof_output_post_init','Missing pre-initialization of the output system')
+    call handle_error1_l(pre_init,'prof_output_post_init','Missing pre-initialization of the output system')
 
     ! Get length of output list request
     output_list_len=0; i=0
@@ -1964,7 +1967,7 @@ contains
 
     ! Establish output buffer
     allocate(output_buffer(p_nk,size(out_gmm)+size(out_phy),output_buffer_length),stat=istat)
-    call handle_error(istat,'prof_output_post_init', &
+    call handle_error1(istat,'prof_output_post_init', &
          'Allocating space for output_buffer (reduce output_buffer_length in scm_cfgs namelist)')
     output_buffer = 0.
 
@@ -2020,7 +2023,7 @@ contains
 
        ! Check for output system base initialization
        call prof_output_post_init(F_initialized=base_init)
-       call handle_error_l(base_init,'prof_output','Base initialization is required before call to prof_output()')
+       call handle_error1_l(base_init,'prof_output','Base initialization is required before call to prof_output()')
 
        ! Set file prefix and extension
        call prof_output_prefix(prefix,prefix_coord)
@@ -2029,13 +2032,13 @@ contains
        ! Generate output files containing the hybrid coordinate values
        nullify(hybm_free,hybt_free)
        err = vgd_get(vcoord,'VCDM - VERTICAL COORDINATE MOMENTUM',hybm_free)
-       call handle_error_l(err==VGD_OK,'prof_output','Retrieving VCDM')
-       call handle_error_l(size(hybm_free)==p_nk+1,'prof_output','Invalid number of staggered momentum levels')
+       call handle_error1_l(err==VGD_OK,'prof_output','Retrieving VCDM')
+       call handle_error1_l(size(hybm_free)==p_nk+1,'prof_output','Invalid number of staggered momentum levels')
        hybm = hybm_free(1:p_nk)
        err = vgd_get(vcoord,'VCDT - VERTICAL COORDINATE THERMO',hybt_free)
        staggered: if (associated(hybt_free)) then
-          call handle_error_l(err==VGD_OK,'prof_output','Retrieving VCDT')
-          call handle_error_l(size(hybt_free)==p_nk+1,'prof_output','Invalid number of staggered thermo levels')
+          call handle_error1_l(err==VGD_OK,'prof_output','Retrieving VCDT')
+          call handle_error1_l(size(hybt_free)==p_nk+1,'prof_output','Invalid number of staggered thermo levels')
           hybt = hybt_free(1:p_nk)
        else
           hybt = hybm
@@ -2048,22 +2051,22 @@ contains
        ! Generate an RPN Standard output file containing the vertical grid descriptor (!!)
        oun = 0; fname = trim(prefix_coord)//'vcoord.fst'
        err = fnom(oun,trim(fname),'RND+STD',0)
-       call handle_error(err,'prof_output','Acquiring lock for '//trim(fname))
+       call handle_error1(err,'prof_output','Acquiring lock for '//trim(fname))
        err = fstouv(oun,'RND')
-       call handle_error(err,'prof_output','Opening '//trim(fname))
+       call handle_error1(err,'prof_output','Opening '//trim(fname))
        err = vgd_write(vcoord,oun,'fst')
-       call handle_error_l(err==VGD_OK,'prof_output','Writing !! record to '//trim(fname))
+       call handle_error1_l(err==VGD_OK,'prof_output','Writing !! record to '//trim(fname))
        err = fstfrm(oun)
-       call handle_error(err,'prof_output','Closing '//trim(fname))
+       call handle_error1(err,'prof_output','Closing '//trim(fname))
        err = fclos(oun)
-       call handle_error(err,'prof_output','Releasing lock for '//trim(fname))
+       call handle_error1(err,'prof_output','Releasing lock for '//trim(fname))
 
        ! Obtain information about the diagnostic level
-       call handle_error_l(vgd_get(vcoord,'DIPM - IP1 of diagnostic level (m)',dipm(1))==VGD_OK,'prof_output','Obtaining diagnostic level (m)')
-       call handle_error_l(vgd_get(vcoord,'DIPT - IP1 of diagnostic level (t)',dipt(1))==VGD_OK,'prof_output','Obtaining diagnostic level (t)')
+       call handle_error1_l(vgd_get(vcoord,'DIPM - IP1 of diagnostic level (m)',dipm(1))==VGD_OK,'prof_output','Obtaining diagnostic level (m)')
+       call handle_error1_l(vgd_get(vcoord,'DIPT - IP1 of diagnostic level (t)',dipt(1))==VGD_OK,'prof_output','Obtaining diagnostic level (t)')
 
        ! Get last step number
-       call handle_error_l(step_get('step_total',step_total)==STEP_OK,'prof_output','Retrieving step_total from step package')
+       call handle_error1_l(step_get('step_total',step_total)==STEP_OK,'prof_output','Retrieving step_total from step package')
 
        ! Initializations complete
        initialized = .true.
@@ -2078,15 +2081,15 @@ contains
              out_gmm(i)%is_found = .false.
              cycle
           endif
-          call handle_error_l(GMM_IS_OK(gmm_getmeta(out_gmm(i)%name,meta)),'prof_output','GMM getmeta for '//trim(out_gmm(i)%name))
+          call handle_error1_l(GMM_IS_OK(gmm_getmeta(out_gmm(i)%name,meta)),'prof_output','GMM getmeta for '//trim(out_gmm(i)%name))
           field_3d: if (meta%l(3)%n > 0) then
-             call handle_error_l(GMM_IS_OK(gmm_get(out_gmm(i)%name,ptr3d)),'prof_output','GMM get for '//trim(out_gmm(i)%name))
+             call handle_error1_l(GMM_IS_OK(gmm_get(out_gmm(i)%name,ptr3d)),'prof_output','GMM get for '//trim(out_gmm(i)%name))
              call prof_write(trim(out_gmm(i)%prefix)//trim(out_gmm(i)%oname)//trim(ext),out_gmm(i)%need_header, &
                   out_gmm(i)%buffer_id,trim(out_gmm(i)%format),current_date,ptr3d(1,1,:),F_stepno==step_total)
           else
-             call handle_error_l(GMM_IS_OK(gmm_get(out_gmm(i)%name,ptr2d)),'prof_output','GMM get for '//trim(out_gmm(i)%name))
+             call handle_error1_l(GMM_IS_OK(gmm_get(out_gmm(i)%name,ptr2d)),'prof_output','GMM get for '//trim(out_gmm(i)%name))
              allocate(ptr3d(1,1,1),stat=err)
-             call handle_error(err,'prof_output','Allocating space for ptr3d')
+             call handle_error1(err,'prof_output','Allocating space for ptr3d')
              ptr3d(:,:,1) = ptr2d
              call prof_write(trim(out_gmm(i)%prefix)//trim(out_gmm(i)%oname)//trim(ext),out_gmm(i)%need_header, &
                   out_gmm(i)%buffer_id,trim(out_gmm(i)%format),current_date,ptr3d(1,1,:),F_stepno==step_total)
@@ -2111,12 +2114,12 @@ contains
              out_phy(i)%is_found = .false.
           endif
        enddo
-       call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_p0_plus_s,ptr2d)),'prof_output','GMM retrieving '//trim(gmmk_pw_p0_plus_s))
+       call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_p0_plus_s,ptr2d)),'prof_output','GMM retrieving '//trim(gmmk_pw_p0_plus_s))
        if (associated(ptr3d)) deallocate(ptr3d); nullify(ptr3d)
-       call handle_error_l(vgd_levels(vcoord,dipm,ptr3d,ptr2d)==VGD_OK,'prof_output','Computing diagnostic level (m)')
+       call handle_error1_l(vgd_levels(vcoord,dipm,ptr3d,ptr2d)==VGD_OK,'prof_output','Computing diagnostic level (m)')
        call prof_write(trim(prefix_coord)//'DIAGM'//trim(ext),hdr_diagm,-1,'',current_date,ptr3d(1,1,:)/100.,.false.)
        if (associated(ptr3d)) deallocate(ptr3d); nullify(ptr3d)
-       call handle_error_l(vgd_levels(vcoord,dipt,ptr3d,ptr2d)==VGD_OK,'prof_output','Computing diagnostic level (t)')
+       call handle_error1_l(vgd_levels(vcoord,dipt,ptr3d,ptr2d)==VGD_OK,'prof_output','Computing diagnostic level (t)')
        call prof_write(trim(prefix_coord)//'DIAGT'//trim(ext),hdr_diagt,-1,'',current_date,ptr3d(1,1,:)/100.,.false.)
        if (associated(ptr3d)) deallocate(ptr3d); nullify(ptr3d)
     endif
@@ -2207,7 +2210,7 @@ contains
     oun = 60
     if (F_header_L) then
        open(unit=oun,file=trim(F_fname_S),status='REPLACE',action='WRITE',iostat=err)
-       call handle_error_l(err==0,'prof_write','Opening '//trim(F_fname_S)//' for header')
+       call handle_error1_l(err==0,'prof_write','Opening '//trim(F_fname_S)//' for header')
        write(oun,'(a,'//trim(clen)//'('//trim(index_format)//'))') 'date',(i,i=1,size(F_data))
        close(oun)
        F_header_L = .false.
@@ -2227,14 +2230,14 @@ contains
           active_date = F_date_S
           if (.not. allocated(date_buffer)) then
              allocate(date_buffer(size(output_buffer,dim=3)),stat=err)
-             call handle_error(err,'prof_write','Allocating date_buffer')
+             call handle_error1(err,'prof_write','Allocating date_buffer')
           endif
           date_buffer(output_buffer_count) = ISOdate
        endif
        output_buffer(1:size(F_data),F_buffer_id,output_buffer_count) = F_data
        if (flush_buffer .or. F_flush) then
           open(unit=oun,file=trim(F_fname_S),status='OLD',action='WRITE',position='APPEND',iostat=err)
-          call handle_error_l(err==0,'prof_write','Acquiring buffering lock for '//trim(F_fname_S))
+          call handle_error1_l(err==0,'prof_write','Acquiring buffering lock for '//trim(F_fname_S))
           do i=1,output_buffer_count
              write(oun,'(a,x,'//trim(clen)//'('//trim(fmt)//',x))') trim(date_buffer(i)), &
                   output_buffer(1:size(F_data),F_buffer_id,i)
@@ -2244,7 +2247,7 @@ contains
        endif
     else
        open(unit=oun,file=trim(F_fname_S),status='OLD',action='WRITE',position='APPEND',iostat=err)
-       call handle_error_l(err==0,'prof_write','Acquiring unbuffered lock for '//trim(F_fname_S))
+       call handle_error1_l(err==0,'prof_write','Acquiring unbuffered lock for '//trim(F_fname_S))
        write(oun,'(a,x,'//trim(clen)//'('//trim(fmt)//',x))') trim(ISOdate),F_data
        close(oun)
     end if BUFFERED_WRITE
@@ -2269,7 +2272,7 @@ contains
 
     ! Compute one-sided differences at the ends of the column, and centered differences in the middle
     nk = size(fld,dim=3)
-    if (nk < 2) call handle_error(-1,'prof_dyn_fwd::ddp','Insufficient number of levels for ddp')
+    if (nk < 2) call handle_error1(-1,'prof_dyn_fwd::ddp','Insufficient number of levels for ddp')
     der(1,1,1) = (fld(1,1,2)-fld(1,1,1)) / (pres(1,1,2)-pres(1,1,1))
     do k=2,nk-1
        der(1,1,k) = (fld(1,1,k+1)-fld(1,1,k-1)) / (pres(1,1,k+1)-pres(1,1,k-1))
@@ -2312,7 +2315,7 @@ contains
           zadv(1,1,k) = ww(1,1,k) * der
        enddo
     case DEFAULT
-       call handle_error(-1, 'prof_zadv', 'Unknown vertcial advection type '//trim(zadv_type)//' requested')
+       call handle_error1(-1, 'prof_zadv', 'Unknown vertcial advection type '//trim(zadv_type)//' requested')
     end select
   end function prof_zadv
 
@@ -2337,22 +2340,22 @@ contains
     ! Update geopotential (AGL, units m2/s2) on thermo levels as a purely diagnostic value.
     ! GEM computes this in pw_update_GPW() using the prognostic geopotential perturbation
     ! (fiptx), but it must be done diagnostically in the SCM.
-    call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_gz_plus_s,plus)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_gz_plus_s))
-    call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_gz_moins_s,moins)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_gz_moins_s))
-    call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_me_moins_s,me)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_me_moins_s))
-    call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_p0_plus_s,p0)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_p0_plus_s))
-    call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_tt_plus_s,tt)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_tt_plus_s))
-    call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_pt_plus_s,pt)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
-    call handle_error_l(GMM_IS_OK(gmm_get(gmmk_pw_pm_plus_s,pm)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_pm_plus_s))
-    call handle_error_l(GMM_IS_OK(gmm_get('TR/HU:P',hu)),'prof_update_GPW','GMM retrieving TR/HU:P')
+    call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_gz_plus_s,plus)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_gz_plus_s))
+    call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_gz_moins_s,moins)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_gz_moins_s))
+    call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_me_moins_s,me)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_me_moins_s))
+    call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_p0_plus_s,p0)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_p0_plus_s))
+    call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_tt_plus_s,tt)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_tt_plus_s))
+    call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_pt_plus_s,pt)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
+    call handle_error1_l(GMM_IS_OK(gmm_get(gmmk_pw_pm_plus_s,pm)),'prof_update_GPW','GMM retrieving '//trim(gmmk_pw_pm_plus_s))
+    call handle_error1_l(GMM_IS_OK(gmm_get('TR/HU:P',hu)),'prof_update_GPW','GMM retrieving TR/HU:P')
     allocate(tv(1,1,size(tt,dim=3)),qh(1,1,size(tt,dim=3)),stat=err)
-    call handle_error(err,'prof_update_GPW','Allocating TV/QH')
+    call handle_error1(err,'prof_update_GPW','Allocating TV/QH')
     qh = 0.
     do i=1,size(tracers)
        if (tracers(i)%wload) then
           call gmmx_name_parts(tracers(i)%gmm,prefix,basename,time,ext)
           if (time == ':P') then
-             call handle_error_l(GMM_IS_OK(gmm_get(tracers(i)%gmm,tr)),'prof_update_GPW','GMM retrieving '//trim(tracers(i)%gmm))
+             call handle_error1_l(GMM_IS_OK(gmm_get(tracers(i)%gmm,tr)),'prof_update_GPW','GMM retrieving '//trim(tracers(i)%gmm))
              qh = qh + tr
           endif
        endif
@@ -2362,7 +2365,7 @@ contains
     call prof_hydro_height(tv,pt(:,:,1:size(tt,dim=3)),pm,me/grav,p0,plus)
     plus = grav * plus
     deallocate(tv,qh,stat=err)
-    call handle_error(err,'prof_update_GPW','Freeing TV/QH')
+    call handle_error1(err,'prof_update_GPW','Freeing TV/QH')
 
   end subroutine prof_update_GPW
 
@@ -2384,28 +2387,28 @@ contains
     ! Retrieve GMM pressures and prescribed P0
     nullify(pm,pre,pt)
     istat = gmm_get(gmmk_pw_pm_plus_s,pm,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pw_pm_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pw_pm_plus_s))
     istat = gmm_get(gmmk_pw_pt_plus_s,pt,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
     istat = gmm_get(gmmk_pre_p0_s,pre,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pre_p0_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pre_p0_s))
     istat = gmm_get(gmmk_pw_p0_plus_s,p0,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pw_p0_plus_s))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_update_pres','GMM retrieving '//trim(gmmk_pw_p0_plus_s))
 
     ! Compute momentum and thermodynamic level pressure columns (note that
     ! only momentum levels are available if the vertical coordinate is not
     ! staggered)
     nullify(ip1m,ip1t,presm,prest)
     err = vgd_get(vcoord,'VIPM - IP1 MOMENTUM',ip1m)
-    call handle_error_l(err==VGD_OK,'prof_update_pres','Retrieving VIPM')
+    call handle_error1_l(err==VGD_OK,'prof_update_pres','Retrieving VIPM')
     err = vgd_levels(vcoord,ip1m,presm,sfc_field=pre(1,1))
-    call handle_error_l(err==VGD_OK,'prof_update_pres','Computing momentum-level pressures')
+    call handle_error1_l(err==VGD_OK,'prof_update_pres','Computing momentum-level pressures')
     pm(1,1,:) = presm(1:size(pm,dim=3))
     err = vgd_get(vcoord,'VIPT - IP1 THERMO',ip1t)
     staggered: if (associated(ip1t)) then
-       call handle_error_l(err==VGD_OK,'prof_update_pres','Retrieving VIPT')
+       call handle_error1_l(err==VGD_OK,'prof_update_pres','Retrieving VIPT')
        err = vgd_levels(vcoord,ip1t,prest,sfc_field=pre(1,1))
-       call handle_error_l(err==VGD_OK,'prof_update_pres','Computing thermo-level pressures')
+       call handle_error1_l(err==VGD_OK,'prof_update_pres','Computing thermo-level pressures')
        pt(1,1,:) = prest(1:size(pt,dim=3))
     else
        pt = pm
@@ -2440,14 +2443,14 @@ contains
     nullify(pre)
     W_PRESCRIBED: if (prof_is_valid(gmmk_pre_ww_s)) then
        istat = gmm_get(gmmk_pre_ww_s,pre)
-       call handle_error_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pre_ww_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pre_ww_s))
        pre_ww = .true.; pre_wz = .false.
     elseif (prof_is_valid(gmmk_pre_wz_s)) then
        istat = gmm_get(gmmk_pre_wz_s,pre)
-       call handle_error_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pre_wz_s))
+       call handle_error1_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pre_wz_s))
        pre_ww = .false.; pre_wz = .true.
     endif W_PRESCRIBED
-    call handle_error_l(associated(pre),'prof_w','Vertical motion must be prescribed')
+    call handle_error1_l(associated(pre),'prof_w','Vertical motion must be prescribed')
 
     ! Determine output coordinate for calculations
     W_COORD: select case (F_coord)
@@ -2459,9 +2462,9 @@ contains
        else
           nullify(tt,pt)
           istat = gmm_get(gmmk_pw_tt_moins_s,tt)
-          call handle_error_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_tt_moins_s))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_tt_moins_s))
           istat = gmm_get(gmmk_pw_pt_plus_s,pt)
-          call handle_error_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
           F_w = -(grav*pt(:,:,1:size(F_w,dim=3)))/(rgasd*tt) * pre
        endif
 
@@ -2472,15 +2475,15 @@ contains
        else
           nullify(tt,pt)
           istat = gmm_get(gmmk_pw_tt_moins_s,tt)
-          call handle_error_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_tt_moins_s))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_tt_moins_s))
           istat = gmm_get(gmmk_pw_pt_plus_s,pt)
-          call handle_error_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
+          call handle_error1_l(GMM_IS_OK(istat),'prof_w','GMM retrieving '//trim(gmmk_pw_pt_plus_s))
           F_w = -(rgasd*tt)/(grav*pt(:,:,1:size(F_w,dim=3))) * pre
        endif
 
     case DEFAULT
        ! Invalid vertical coordinate
-       call handle_error(1,'prof_w','Invalid vertical coordinate '//trim(F_coord))
+       call handle_error1(1,'prof_w','Invalid vertical coordinate '//trim(F_coord))
 
     end select W_COORD
 
@@ -2517,15 +2520,15 @@ contains
     case ('t')
        ip1name = 'VIPT'
     case DEFAULT
-       call handle_error(-1,'prof_std_pres','Invalid level type '//trim(lev)//' provided')
+       call handle_error1(-1,'prof_std_pres','Invalid level type '//trim(lev)//' provided')
     end select
     nullify(ip1list)
     err = vgd_get(vcoord,trim(ip1name),ip1list)
-    call handle_error_l(err==VGD_OK,'prof_std_pres','Retrieving '//trim(ip1name))
+    call handle_error1_l(err==VGD_OK,'prof_std_pres','Retrieving '//trim(ip1name))
     if (associated(pres)) nullify(pres)
     ! Compute pressure profile based on reference surface pressure
     err = vgd_levels(vcoord,ip1list,pres,REF_SFC_PRESSURE)
-    call handle_error_l(err==VGD_OK,'prof_std_pres','Computing pressure profile')
+    call handle_error1_l(err==VGD_OK,'prof_std_pres','Computing pressure profile')
 
   end subroutine prof_std_pres
 
@@ -2556,7 +2559,7 @@ contains
     ! Initializations
     nk = size(F_pres_gz,dim=3)
     allocate(pres_mid(1,1,nk),tv_mid(1,1,nk),gz_col(1,1,nk+1),pres_col(1,1,nk+1),stat=istat)
-    call handle_error(istat,'prof_hydro_height','Allocating pres_mid and tv_mid')
+    call handle_error1(istat,'prof_hydro_height','Allocating pres_mid and tv_mid')
 
     ! Initialize surface height and pressure column
     gz_col(:,:,nk+1) = F_me
@@ -2578,7 +2581,7 @@ contains
 
     ! Heap cleanup
     deallocate(pres_mid,tv_mid,gz_col,pres_col,stat=istat)
-    call handle_error(istat,'prof_hydro_height','Freeing pres_mid and tv_mid')
+    call handle_error1(istat,'prof_hydro_height','Freeing pres_mid and tv_mid')
 
   end subroutine prof_hydro_height
 
@@ -2712,7 +2715,7 @@ contains
     if (GMM_IS_OK(gmm_getmeta(F_gmmname,meta))) then
        if (iand(meta%a%flags,GMM_FLAG_INAN) == 0) valid = .true.
     else
-       call handle_error_l(myQuiet,'prof_is_valid','Unable to recover metadata for '//trim(F_gmmname))
+       call handle_error1_l(myQuiet,'prof_is_valid','Unable to recover metadata for '//trim(F_gmmname))
     endif
 
   end function prof_is_valid
@@ -2735,10 +2738,10 @@ contains
 
     ! Retrieve metadata and check for NaN flag
     istat = gmm_getmeta(F_gmmname,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_make_valid','Unable to recover metadata for '//trim(F_gmmname))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_make_valid','Unable to recover metadata for '//trim(F_gmmname))
     meta%a%flags = meta%a%flags-GMM_FLAG_INAN
     istat = gmm_updatemeta(F_gmmname,meta)
-    call handle_error_l(GMM_IS_OK(istat),'prof_make_valid','Unable to update metadata for '//trim(F_gmmname))
+    call handle_error1_l(GMM_IS_OK(istat),'prof_make_valid','Unable to update metadata for '//trim(F_gmmname))
 
   end subroutine prof_make_valid
 
