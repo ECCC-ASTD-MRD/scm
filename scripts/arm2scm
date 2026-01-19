@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # Process ARM data to create scm-type output files compatible with the
 # onboard plotting tools of the SCM.
@@ -63,7 +63,7 @@ for fname in args.datasrc:
         sys.exit(1)
 
     # Determine field name
-    all_flds = [d for d in data.variables.keys() if not any(r in d for r in reserved_substr)]
+    all_flds = [d for d in list(data.variables.keys()) if not any(r in d for r in reserved_substr)]
     if not in_fld:
         try:
             in_fld = all_flds[0]
