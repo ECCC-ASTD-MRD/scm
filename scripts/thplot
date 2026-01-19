@@ -1,10 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import optparse
 import subprocess
 import glob,re
 import sys,os
-import ConfigParser
+import configparser
 import tempfile
 
 def default_yaxis(config,coord):
@@ -25,7 +25,7 @@ def check_coord(option,opt_str,value,parser):
     import string
     valid_coords = {'P':'PRES','Z':'HGHT','H':'HYB','S':'SIG'}
     ustring = value.upper()
-    if not ustring in valid_coords.keys():
+    if not ustring in list(valid_coords.keys()):
         sys.stderr.write("\n"+option.help+"\n\n")
         raise optparse.OptionValueError("{0} is not a valid COORDINATE (see list above)".format(value))
     setattr(parser.values,option.dest,valid_coords[ustring])
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     contour_default = ['-Inf','Inf','0']
     
     # Retrieve user configuration
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.ConfigParser()
     config.read([os.path.join(os.getenv('scm_DIR'),'share','default_config'),os.path.join(os.getenv('HOME'),'.scmrc')])
     if not config.has_section('thplot'): config.add_section('thplot')
     show_default = config.get('thplot','display_application')
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         prog = {}
         for entry in ['h','m','s']:
             try:
-                prog[entry] = int(re.search('(\d+)'+entry,time).group(1))
+                prog[entry] = int(re.search(r'(\d+)'+entry,time).group(1))
             except AttributeError:
                 prog[entry] = 0
         fcst.append(3600*prog['h'] + 60*prog['m'] + prog['s'])
@@ -155,17 +155,17 @@ if __name__ == "__main__":
               ':'.join(colmap)+' '+options.units+' '+options.interp+' '+str(options.rev)+' '+ \
               ipcfile+' '+' '.join(args)+' <'+os.path.join(script_path,'thsection.R')    
     p = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-    error_message = p.stderr.read().rstrip('\n')
-    output_message = p.stdout.read().rstrip('\n')
+    error_message = p.stderr.read().rstrip(b'\n')
+    output_message = p.stdout.read().rstrip(b'\n')
     if error_message:
-        sys.stderr.write(error_message)
+        sys.stderr.write(error_message.decode('utf-8'))
     else:
         try:
             fd = open(ipcfile,'r')
             ofile = fd.read()
         except:
             sys.stderr.write("Hmmmm ... looks like the plot wasn't generated correctly\n")
-            sys.stderr.write(error_message)
+            sys.stderr.write(error_message.decode('utf-8'))
             sys.exit(1)
         fd.close()
         sys.stdout.write('Generated '+ofile)
