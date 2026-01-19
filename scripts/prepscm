@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # Prepare input for the single column model (SCM)
 import optparse
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     for arg in args:
         explist = glob.glob(arg)
         flist.extend(sorted(explist))
-    if len(flist) is 0: sys.exit(0)
+    if len(flist) == 0: sys.exit(0)
     init_file = (options.initfile) and options.initfile or flist[0]
     command_args = [str(float(options.lat)),str(float(options.lon)),options.interp.upper(),str(options.tracers)]
     fst2ptxt_child = 'fst2ptxt'
