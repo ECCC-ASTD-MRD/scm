@@ -1,10 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import optparse
 import subprocess
 import glob,re
 import sys,os
-import ConfigParser
+import configparser
 
 class PluginError(Exception):
     """Plugin error handling"""
@@ -41,7 +41,7 @@ class Plugin:
             return(self.plugin_err)
         self.diag = {}
         for line in doc:
-            entry = re.split('\s',line.rstrip(),maxsplit=1)
+            entry = re.split(r'\s',line.rstrip(),maxsplit=1)
             self.diag[entry[0].upper()] = entry[1]
         return(self.plugin_ok)
 
@@ -62,8 +62,8 @@ class Plugin:
         if verbose:
             sys.stdout.write(command)
         p = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-        error_message = p.stderr.read().rstrip('\n')
-        output_message = p.stdout.read().rstrip('\n')
+        error_message = p.stderr.read().rstrip(b'\n')
+        output_message = p.stdout.read().rstrip(b'\n')
         if verbose:
             sys.stdout.write(output_message)
         if error_message:
@@ -83,7 +83,7 @@ def getDate(run_path):
 if __name__ == "__main__":
 
     # Retrieve user configuration
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.ConfigParser()
     config.read([os.path.join(os.getenv('scm_DIR'),'share','default_config'),os.path.join(os.getenv('HOME'),'.scmrc')])
     dlist_default = config.get('scmdiag','diag_list')
     plugin_default = config.get('scmdiag','plugins')
