@@ -1,16 +1,16 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import optparse
 import subprocess
 import glob,re
 import sys,os
-import ConfigParser
+import configparser
 import tempfile
 
 if __name__ == "__main__":
 
     # Retrieve user configuration
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.ConfigParser()
     config.read([os.path.join(os.getenv('scm_DIR'),'share','default_config'),os.path.join(os.getenv('HOME'),'.scmrc')])
     if not config.has_section('tephiplot'): config.add_section('tephiplot')
     show_default = config.get('tephiplot','display_application')
@@ -76,12 +76,12 @@ if __name__ == "__main__":
         prog = {}
         for entry in ['h','m','s']:
             try:
-                prog[entry] = int(re.search('(\d+)'+entry,time).group(1))
+                prog[entry] = int(re.search(r'(\d+)'+entry,time).group(1))
             except AttributeError:
                 prog[entry] = 0
         fcst.append(3600*prog['h'] + 60*prog['m'] + prog['s'])
     try:
-        fcstlist = range(fcst[0],fcst[1],fcst[2])
+        fcstlist = list(range(fcst[0],fcst[1],fcst[2]))
         fcstlist.append(fcst[1])
     except ValueError:
         fcstlist = [fcst[0]]
@@ -93,8 +93,8 @@ if __name__ == "__main__":
               options.device+' '+str(options.collist)+' '+str(options.points)+' '+ \
               ipcfile+' '+' '.join(args)+' <'+os.path.join(script_path,'tephi.R')
     p = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-    error_message = p.stderr.read().rstrip('\n')
-    output_message = p.stdout.read().rstrip('\n')
+    error_message = p.stderr.read().rstrip(b'\n')
+    output_message = p.stdout.read().rstrip(b'\n')
 
     print(output_message)
     print(error_message)
