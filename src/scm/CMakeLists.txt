@@ -20,8 +20,15 @@ target_link_libraries(scmdyn PRIVATE
 
 message(STATUS "(EC) Generating SCM binaries Makefile")
 
+if (("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "IntelLLVM") AND (CMAKE_Fortran_COMPILER_VERSION VERSION_GREATER 2025))
+  # link with libgcc_s to get a traceback
+  set(GCC_S gcc_s)
+endif()
+
+
 add_executable(mainscm main/mainscm.F90)
 target_link_libraries(mainscm
+   ${GCC_S}
    scmdyn
    rpnphy
    modelutils
