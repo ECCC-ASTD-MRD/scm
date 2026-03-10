@@ -8,9 +8,9 @@
 # - Load a script for common setup to all compilers
 
 # Check name of the script called, to export corresponding Intel compiler version
-INTEL_SCRIPT_NAME=$(echo $(basename ${BASH_SOURCE[0]}))
+SETUP_SCRIPT_NAME=$(echo $(basename ${BASH_SOURCE[0]}))
 
-case ${INTEL_SCRIPT_NAME} in
+case ${SETUP_SCRIPT_NAME} in
     .eccc_setup_intel_2022.1.2)
         export COMPILER_VERSION=2022.1.2
         ;;
@@ -50,3 +50,4 @@ export COMPILER_SUITE=intel
 
 # Set WITH_SYSTEM_RPN variable with default value TRUE for ECCC users
 export WITH_SYSTEM_RPN=TRUE
+export SCM_SETUP_SCRIPT_NAME=${SETUP_SCRIPT_NAME}

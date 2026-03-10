@@ -19,16 +19,12 @@ if [ -n "${SCM_STORAGE_DIR}" -a -n "${SCM_ARCH}" -a -n "${SCM_WORK}" ] ; then
     fi
 
     if [ -n "${EC_ARCH}" ]; then
-        if [ "$COMPILER_SUITE" == "intel" ] ; then
-            SETUP_FILE=.eccc_setup_intel
-        else
-            SETUP_FILE=.eccc_setup_gnu
-        fi
+        SETUP_FILE=${SCM_SETUP_SCRIPT_NAME}
 
 cat > ${PWD}/${SCM_WORK}/.eccc_setup <<EOF
 ici=\$PWD
 cd ${scm_DIR}
-. ${SETUP_FILE}
+. ./${SETUP_FILE}
 cd \$ici
 EOF
     fi
