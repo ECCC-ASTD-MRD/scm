@@ -5,7 +5,7 @@
 [submodule "src/rpn-si/rmn"]
 	path = src/rpn-si/rmn
 	url = https://gitlab.science.gc.ca/RPN-SI/librmn.git
-	branch = master
+	branch = alpha
 [submodule "src/rpn-si/rpncomm"]
 	path = src/rpn-si/rpncomm
 	url = https://gitlab.science.gc.ca/RPN-SI/rpncomm.git
