@@ -18,6 +18,7 @@
 !---------------------------------- LICENCE END ---------------------------------
 
 subroutine forcedate()
+   use str_mod, only: str_toint
   ! Extract and set the dateo / deet / npas set for a specific field in a file
 
   implicit none
@@ -56,9 +57,9 @@ subroutine forcedate()
   infile = args(1)
   outfile = args(2)
   fld_name = args(3)
-  read(args(4),'(i)') fdate
-  read(args(5),'(i)') fdeet
-  read(args(6),'(i)') fnpas
+  err = str_toint(fdate, args(4))
+  err = str_toint(fdeet, args(5))
+  err = str_toint(fnpas, args(6))
   deallocate(args,stat=err)
   call handle_error(err,'forcedate','Freeing args')
 

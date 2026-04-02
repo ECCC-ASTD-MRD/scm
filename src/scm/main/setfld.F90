@@ -18,6 +18,7 @@
 !---------------------------------- LICENCE END ---------------------------------
 
 subroutine setfld()
+   use str_mod, only: str_toreal
   ! Generate an FST file that contains constant values for fields 
   ! that are user-specified.
 
@@ -83,12 +84,12 @@ subroutine setfld()
         idelim_lev = idelim_value
         sets(i)%lev = -1
      else
-        read(sets(i)%in(idelim_lev+1:idelim_value-1),'(i)') sets(i)%lev
+        read(sets(i)%in(idelim_lev+1:idelim_value-1),*) sets(i)%lev
      endif
      sets(i)%key = sets(i)%in(1:idelim_lev-1)
      cvalue = sets(i)%in(idelim_value+1:)
      if (index(cvalue,'.') == 0) cvalue = trim(cvalue)//'.'
-     read(cvalue,'(f)') sets(i)%value
+     err = str_toreal(sets(i)%value, cvalue)
   enddo
 
   ! Check for duplicate specification of roughness length
