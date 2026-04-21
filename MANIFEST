@@ -1,5 +1,5 @@
 NAME       : scm
-VERSION    : 2.3.0-a21
+VERSION    : 2.3.0-a22
 BUILD      : RelWithDebInfo
 DESCRIPTION: ECCC-MRD Single Column Model - SCM
 SUMMARY    : The Single Column Model (SCM) can be seen as a driver to directly call and integrate a given RPNPHY PHYSICS package on a single column. Developed by the Atmospheric Numerical Prediction Research Section, Meteorological Research Division, of Environment and Climate Change Canada.
@@ -8,13 +8,13 @@ URL        : https://gitlab.science.gc.ca/MIG/scm
 DOC        : https://wiki.cmc.ec.gc.ca/wiki/SCM
 
 # Components
-modelutils = 1.8.0-a18
-rpnphy = 6.3.0-a20
+modelutils = 1.8.0-a22
+rpnphy = 6.3.0-a22
 
 # Dependencies
 #    =,<,<=,>,>= : Version rules
 #    ~           : Optional
-rmn  >= 20.1.0-b6
+rmn  >= 20.1.0-b7
 tdpack >= 1.6.4.1
 vgrid >= 6.9.11.1
 rpncomm >= 4.6.14
