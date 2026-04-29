@@ -1,21 +1,21 @@
+EC users:
 On PPP, can obtain a node with X for an interactive session:
-
 qsub -I -X -lselect=1:ncpus=80:mpiprocs=80:ompthreads=1:mem=100gb -lplace=scatter
 
 Interactive only, commands (examples) as follows:
 
 scmcase -h
-scmcase -list (list cases)
-scmcase -get gabls-3 (obtain case to put in current directory)
-runscm > mylist 2>&1 (run to create results)
-tsplot --var=TJ results/gabls-3 (plot a result)
-scmdiag -h (create more variable diagnostics using plugins)
-scmdiag --list (lists the plugins avail)
-scmdiag --var=WSPD,WDIR results/gabls-3 (adds WSPD,WDIR to series)
-profplot --var=2T --time=1h30m results/* (profile plot)
+scmcase -list # list cases
+scmcase -get gabls-3 # obtain case to put in current directory
+runscm > mylist 2>&1 # run to create results
+tsplot --var=TJ results/gabls-3 # plot a result
+scmdiag -h # create more variable diagnostics using plugins
+scmdiag --list # lists the plugins avail
+scmdiag --var=WSPD,WDIR results/gabls-3 # adds WSPD,WDIR to series
+profplot --var=2T --time=1h30m results/* # profile plot
 profplot --var=WSPD --time=1h30m results/*
 scmdiag --var=THETA results/gabls-3
 profplot --var=THETA --time=1h30m results/*
-tephiplot -t 6h:12h results/gabls-3 (tephi plot)
+tephiplot -t 6h:12h results/gabls-3 # tephi plot
 
-prepscm (to create new set of data for runscm - see wiki SCM)
+prepscm # to create new set of data for runscm - see wiki SCM
