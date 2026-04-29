@@ -24,6 +24,15 @@ if ((("$ENV{ECCI_PROCESS}" STREQUAL "staging") OR (STATIC_INTEL)) AND ("${CMAKE_
 endif()
 
 find_package(MPI)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(NetCDF IMPORTED_TARGET netcdf-fortran)
+set(NETCDF_LIBRARIES netcdff netcdf)
+
+list(APPEND NETCDF_LIBRARIES hdf5_fortran hdf5_hl_fortran hdf5_hl hdf5 curl)
+
+# needed in some cases, especially at EC
+execute_process(COMMAND sh "-c" "nf-config --includedir" OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE NetCDF_INCLUDE_DIRS_SUPP)
+set(NetCDF_INCLUDE_DIRS ${NetCDF_INCLUDE_DIRS} ${NetCDF_INCLUDE_DIRS_SUPP})
 
 # To build without OpenMP, you have to add -DWITH_OPENMP=FALSE to the cmake command line
 set(WITH_OPENMP TRUE CACHE BOOL "Control whether to use OpenMP")

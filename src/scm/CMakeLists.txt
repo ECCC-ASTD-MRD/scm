@@ -8,7 +8,7 @@ endif()
 
 file(GLOB F_FILES */*.F90 utils/*F90)
 
-set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/modules )
+set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/modules)
 
 add_library(scmdyn STATIC ${F_FILES})
 target_link_libraries(scmdyn PRIVATE
@@ -16,7 +16,10 @@ target_link_libraries(scmdyn PRIVATE
    modelutils
    modelutils_tmg_stubs
    modelutils_ov_ifort
+   ${NETCDF_LIBRARIES}
 )
+
+target_include_directories(scmdyn PRIVATE ${NetCDF_INCLUDE_DIRS})
 
 message(STATUS "(EC) Generating SCM binaries Makefile")
 
@@ -40,7 +43,6 @@ target_link_libraries(mainscm
    rmn::rmn-ompi
    OpenMP::OpenMP_Fortran
    MPI::MPI_Fortran
-   netcdff netcdf hdf5hl_fortran hdf5_hl hdf5_fortran hdf5 dl m z curl
    ${NETCDF_LIBRARIES}
    ${LAPACK_LIBRARIES}
    ${BLAS_LIBRARIES}
