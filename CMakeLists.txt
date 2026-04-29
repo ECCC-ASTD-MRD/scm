@@ -143,6 +143,10 @@ message(STATUS "(EC) Setting working directory prefix to ${WORK_PREFIX}")
 add_subdirectory(${CMAKE_SOURCE_DIR}/src src)
 
 # list of binaries depends on built sources
+if((NOT DEFINED ENV{EC_ARCH}) OR (NOT WITH_SYSTEM_RPN))
+  list(APPEND BINARIES cclargs)
+endif()
+
 list(APPEND BINARIES mainscm prphynml forcedate fst2ptxt setfld)
 install(TARGETS ${BINARIES} RUNTIME DESTINATION ${WORK_PREFIX}/bin)
 

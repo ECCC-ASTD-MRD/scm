@@ -44,6 +44,11 @@ add_subdirectory(modelutils modelutils)
 add_subdirectory(rpnphy rpnphy)
 add_subdirectory(scm scm)
 
+# Add cclargs only for external users, or if WITH_SYSTEM_RPN is FALSE
+if((NOT DEFINED ENV{EC_ARCH}) OR (NOT WITH_SYSTEM_RPN))
+  add_subdirectory(rpn-si/cclargs cclargs)
+endif()
+
 # To be installed only with package
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/scripts/" DESTINATION scripts USE_SOURCE_PERMISSIONS PATTERN "link-dbase.sh" EXCLUDE)
 install(FILES "${CMAKE_SOURCE_DIR}/share/default_config" DESTINATION share)
