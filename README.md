@@ -1,3 +1,8 @@
+The following instructions are for ECCC users.
+
+If you are using SCM outside ECCC, please see the [instructions for external
+users](README_External_users.md).
+
 # How to get, compile and run SCM at the CMC.
 # SCM - Single Column Model
 
