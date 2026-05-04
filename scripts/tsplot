@@ -10,6 +10,21 @@ import configparser
 import urllib.parse
 import tempfile
 
+C_STRSETLEN = lambda s,l: "{{:{}s}}".format(l).format(s[:l])
+C_STRSETLEN.__doc__ = 'Return str with specified len, cut extra right char or right pad with spaces'
+def C_CHAR2WCHAR(x, l=None):
+    """
+    Convert bytes to str
+    """
+    try:
+        s = str(x.decode('ascii'))
+    except UnicodeDecodeError:
+        s = x.decode('utf-8')
+    return s if l is None else C_STRSETLEN(s, l)
+C_CHAR2WCHAR_COND = lambda x: C_CHAR2WCHAR(x) if isinstance(x, bytes) else x
+C_CHAR2WCHAR_COND.__doc__ = 'Conditionnal Convert bytes to str'
+
+
 if __name__ == "__main__":
 
     # Retrieve user configuration
@@ -115,14 +130,14 @@ if __name__ == "__main__":
     error_message = p.stderr.read().rstrip(b'\n')
     output_message = p.stdout.read().rstrip(b'\n')
     if error_message:
-        sys.stderr.write(error_message)
+        sys.stderr.write(C_CHAR2WCHAR_COND(error_message))
     else:
         try:
             fd = open(ipcfile,'r')
             ofile = fd.read()
         except:
             sys.stderr.write("Hmmmm ... looks like the plot wasn't generated correctly\n")
-            sys.stderr.write(error_message)
+            sys.stderr.write(C_CHAR2WCHAR_COND(error_message))
             sys.exit(1)
         fd.close()
         sys.stdout.write('Generated '+ofile)
