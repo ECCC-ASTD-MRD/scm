@@ -13,7 +13,7 @@ before_script:
   - source ~/ci-admin/env/init.sh
   - export PIPELINE_SUBDIR=${ECCI_BUILD_DIR}/precaution/${CI_PROJECT_PATH}/${CI_BUILD_REF_NAME}/${CI_PIPELINE_ID}
 
-# U3 Intel 2025 with installed RPN-SI libs
+# Intel 2025 with installed RPN-SI libs
 build:rhel-9-graniterapids-64-intel-2025.1.0:
   stage: build
   tags:
@@ -23,11 +23,31 @@ build:rhel-9-graniterapids-64-intel-2025.1.0:
     - set +e
     - . ./.eccc_setup_intel_2025.1.0
     - set -e
-    - mkdir -pv ${PIPELINE_SUBDIR}/build-rhel-9-graniterapids-64-intel-2025.1.0 .
-    - mkdir -pv ${PIPELINE_SUBDIR}/work-rhel-9-graniterapids-64-intel-2025.1.0 .
+    - mkdir -pv ${PIPELINE_SUBDIR}/build-rhel-9-graniterapids-64-intel-2025.1.0
+    - mkdir -pv ${PIPELINE_SUBDIR}/work-rhel-9-graniterapids-64-intel-2025.1.0
     - ln -sf ${PIPELINE_SUBDIR}/work-rhel-9-graniterapids-64-intel-2025.1.0 .
     - SRC_DIR=$(pwd)
     - cd ${PIPELINE_SUBDIR}/build-rhel-9-graniterapids-64-intel-2025.1.0
+    - cmake --fresh ${SRC_DIR}
+    - time make -j $NCPUS
+    - time make work
+
+# GNU 15.2.0
+#----- rhel-9-amd64_gnu-15.2.0
+build:rhel-9-amd64_gnu-15.2.0:
+  stage: build
+  tags:
+    - ppp7
+  when: always
+  script:
+    - set +e
+    - . ./.eccc_setup_gnu_15.2.0
+    - set -e
+    - mkdir -pv ${PIPELINE_SUBDIR}/build-rhel-9-amd64-64-gnu-15.2.0
+    - mkdir -pv ${PIPELINE_SUBDIR}/work-rhel-9-amd64-64-gnu-15.2.0
+    - ln -sf ${PIPELINE_SUBDIR}/work-rhel-9-amd64-64-gnu-15.2.0 .
+    - SRC_DIR=$(pwd)
+    - cd ${PIPELINE_SUBDIR}/build-rhel-9-amd64-64-gnu-15.2.0
     - cmake --fresh ${SRC_DIR}
     - time make -j $NCPUS
     - time make work
