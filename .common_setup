@@ -35,7 +35,13 @@ else
         export SCM_MODEL_DFILES=${scm_DIR}/scm_dbase
         export ATM_MODEL_DFILES=${scm_DIR}/gem_dbase
         export CMCCONST=${ATM_MODEL_DFILES}/datafiles/constants
-        export PATH=${PWD}/scripts:${PWD}/${SCM_WORK}/bin:${PATH}
+        # Check if at ECCC
+        if [ -n "${EC_ARCH}" ]; then
+            export PATH=${PWD}/scripts:${PWD}/${SCM_WORK}/bin:${PATH}
+        # for external use, add scripts in support to PATH
+        else
+            export PATH=${PWD}/scripts:${PWD}/scripts/support:${PWD}/${SCM_WORK}/bin:${PATH}
+        fi 
         export TMPDIR=${TMPDIR-$(mktemp -d /tmp/$USER-XXXX)}
         # exporting some paths needed by SCM
         export PYTHONPATH=${PWD}/lib:${PYTHONPATH}
