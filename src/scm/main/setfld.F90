@@ -53,7 +53,7 @@ subroutine setfld()
   type(override), dimension(:), allocatable :: sets
 
   ! External functions
-  integer, external :: iargc,fnom,fclos,fstouv,fstfrm,fstinl,fstprm,fstluk,fstecr,utils_topology
+  integer, external :: fnom,fclos,fstouv,fstfrm,fstinl,fstprm,fstluk,fstecr,utils_topology
 
   ! Initialize RPN COMM libraries
   pex = 0; pey = 0

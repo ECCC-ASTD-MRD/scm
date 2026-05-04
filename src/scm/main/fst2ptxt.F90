@@ -78,7 +78,7 @@ subroutine fst2ptxt()
   type(vgrid_descriptor) :: vcoord
 
   ! External functions
-  integer, external :: iargc,fnom,fclos,fstouv,fstfrm,fstprm,fstinl,fstluk,fstinf, &
+  integer, external :: fnom,fclos,fstouv,fstfrm,fstprm,fstinl,fstluk,fstinf, &
        ezqkdef,ezsetopt,ezdefset,ezsint,ezuvint,gdll,gdxyfll,ezgdef_fmem,ezsetval, &
        ip1_all,utils_topology
 
