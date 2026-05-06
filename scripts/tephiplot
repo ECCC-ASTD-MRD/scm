@@ -111,8 +111,8 @@ if __name__ == "__main__":
     error_message = p.stderr.read().rstrip(b'\n')
     output_message = p.stdout.read().rstrip(b'\n')
 
-    print(output_message)
-    print(error_message)
+    ## print(C_CHAR2WCHAR_COND(output_message))
+    ## print(C_CHAR2WCHAR_COND(error_message))
 
     if error_message:
         sys.stderr.write(C_CHAR2WCHAR_COND(error_message))
