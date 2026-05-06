@@ -4,7 +4,7 @@
 
 ```bash
 # Clone repository with submodules
-git clone --branch scm_2.3-branch --recursive https://github.com/ECCC-ASTD-MRD/scm.git
+git clone --recursive https://github.com/ECCC-ASTD-MRD/scm.git
 cd scm
 
 # If --recursive was not used:
