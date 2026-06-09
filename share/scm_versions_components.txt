@@ -75,3 +75,6 @@ scm=2.3.0-a18;scmdyn=2.3.0-a18;rpnphy=6.3.0-a18;modelutils=1.8.0-a18
 scm=2.3.0-a20;scmdyn=2.3.0-a20;rpnphy=6.3.0-a20;modelutils=1.8.0-a18
 scm=2.3.0-a21;scmdyn=2.3.0-a20;rpnphy=6.3.0-a20;modelutils=1.8.0-a18
 scm=2.3.0-a22;scmdyn=2.3.0-a22;rpnphy=6.3.0-a22;modelutils=1.8.0-a22
+scm=2.3.0-a23;scmdyn=2.3.0-a23;rpnphy=6.3.0-a23;modelutils=1.8.0-a22
+scm=2.3.0-b01;scmdyn=2.3.0-b01;rpnphy=6.3.0-b01;modelutils=1.8.0-a22
+
