@@ -10,7 +10,7 @@
 # Load code-tools 
 # to avoid linking with libgfortran.so in /lib64
 unset SSMUSE_LD_PREPEND
-. r.load.dot rpn/code-tools/20260219/env/exp/rhel-9-amd64-64@gnu-15.2.0
+. r.load.dot rpn/code-tools/20260602/env/exp/rhel-9-amd64-64@gnu-15.2.0
 
 # Load latest version of RPN-SI libraries and utilities
 . r.load.dot rpn/libs/20260512-beta
