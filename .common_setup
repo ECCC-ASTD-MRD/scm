@@ -10,16 +10,22 @@ if [[ $# -eq 0 ]] ; then
     echo "Example: . ./.common_setup intel"
 else
     unset SCM_ARCH SCM_WORK SCM_STORAGE_DIR scm_DIR
-    export OMP_STACKSIZE=4G
-
-    export COMPILER_SUITE=${1}
     platform=$(utils/os.sh)
+    # ECCC: COMPILER_VERSION should be have been set in the setup file
     if [ -z "${EC_ARCH}" ]; then
-        COMPILER_VERSION=$(utils/compiler.sh ${COMPILER_SUITE})
-        export COMPILER_VERSION
+        COMPILER_VERSION=$(utils/compiler.sh ${1})
     fi
 
-    if [ -n "${platform}" -a "${COMPILER_VERSION}" != "Unknown_Compiler" ]; then
+    if [  "${COMPILER_VERSION}" == "Unknown_Compiler" ]; then
+        printf "Error: the compiler you use is unknown: please check utils/compiler.sh for details\n"
+        return
+    else
+        if [ "${platform}" == "Unknown-OS" ]; then
+           printf "Warning: the platform you use couldn't be determined: carrying on with \"Unknown-OS\"\n"
+        fi
+        export OMP_STACKSIZE=4G
+        export COMPILER_SUITE=${1}
+        export COMPILER_VERSION
         export SCM_ARCH=${platform}-${COMPILER_SUITE}-${COMPILER_VERSION}
         export SCM_WORK=work-${SCM_ARCH}
         
